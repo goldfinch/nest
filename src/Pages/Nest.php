@@ -82,7 +82,7 @@ class Nest extends SiteTree
           [
               DropdownField::create(
                 'NestedObject',
-                'Page Data Object',
+                'Nested object',
                 $list,
                 $this->NestedObject,
               )
