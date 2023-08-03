@@ -3,6 +3,7 @@
 <li><strong>Class name:</strong> $ClassName</li>
 <li><strong>Has nesting above?:</strong> <% if isUpNested %>yes<% else %>no<% end_if %></li>
 <% if isUpNested %>
+<li><strong>Up Nested Class:</strong> $upNestedClass</li>
 <li>
   <ul>
     <% loop NestedChildren %>
@@ -18,6 +19,7 @@
 <% end_if %>
 <li><strong>Has nesting below?:</strong> <% if isDownNested %>yes<% else %>no<% end_if %></li>
 <% if isDownNested %>
+<li><strong>Down Nested Class:</strong> $downNestedClass</li>
 <li>
   <ul>
     <% loop NestedParents %>
