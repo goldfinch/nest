@@ -1,7 +1,7 @@
 <?php
 
-use Goldfinch\Basement\Models\PageDataObject;
+use Goldfinch\Nest\Models\NestedObject;
 
 use Wilr\GoogleSitemaps\GoogleSitemap;
 
-GoogleSitemap::register_dataobject(PageDataObject::class); // , 'daily');
+GoogleSitemap::register_dataobject(NestedObject::class); // , 'daily');

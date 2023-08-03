@@ -4,9 +4,8 @@ Name: goldfinch-nest
 
 SilverStripe\Versioned\VersionedGridFieldItemRequest:
   extensions:
-    - 'App\Extensions\GridFieldDetailFormItemRequestExtension'
+    - 'Goldfinch\Nest\Form\GridField\GridFieldDetailFormItemRequestExtension'
 
-Goldfinch\Basement\Models\PageDataObject:
+Goldfinch\Nest\Models\NestedObject:
   extensions:
     - SilverStripe\Admin\CMSEditLinkExtension
-    # - DNADesign\ElementalList\Extension\BaseElementCMSEditLinkExtension

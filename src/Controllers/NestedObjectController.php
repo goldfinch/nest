@@ -1,28 +1,28 @@
 <?php
 
-namespace Goldfinch\Basement\Controllers;
+namespace Goldfinch\Nest\Controllers;
 
-use Goldfinch\Basement\Models\PageDataObject;
+use Goldfinch\Nest\Models\NestedObject;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\View\Requirements;
 
-class PageDataObjectController extends Controller
+class NestedObjectController extends Controller
 {
-    protected $pageDataObject;
+    protected $nestedObject;
 
-    public function __construct(PageDataObject $pageDataObject)
+    public function __construct(NestedObject $nestedObject)
     {
-        $this->pageDataObject = $pageDataObject;
+        $this->nestedObject = $nestedObject;
 
         parent::__construct();
 
-        $this->setFailover($this->pageDataObject);
+        $this->setFailover($this->nestedObject);
     }
 
-    public function getPageDataObject()
+    public function getNestedObject()
     {
-        return $this->pageDataObject;
+        return $this->nestedObject;
     }
 
     public function forTemplate()
@@ -49,7 +49,7 @@ class PageDataObjectController extends Controller
     {
         $page = Director::get_current_page();
 
-        if ($page && !($page instanceof PageDataObjectController)) {
+        if ($page && !($page instanceof NestedObjectController)) {
             return Controller::join_links(
                 $page->Link($action),
                 '#'. $this->element->getAnchor()
@@ -58,7 +58,7 @@ class PageDataObjectController extends Controller
 
         $curr = Controller::curr();
 
-        if ($curr && !($curr instanceof PageDataObjectController)) {
+        if ($curr && !($curr instanceof NestedObjectController)) {
             return Controller::join_links(
                 $curr->Link($action),
                 '#'. $this->element->getAnchor()

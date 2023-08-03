@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Pages;
+namespace Goldfinch\Nest\Pages;
 
-use Page;
 use Illuminate\Support\Str;
 use SilverStripe\Core\ClassInfo;
-use App\Controllers\PDOPageController;
+use Goldfinch\Nest\Controllers\NestController;
 use SilverStripe\Forms\DropdownField;
-use Goldfinch\Basement\Models\PageDataObject;
+use Goldfinch\Nest\Models\NestedObject;
+use SilverStripe\CMS\Model\SiteTree;
 
-class PDOPage extends Page
+class Nest extends SiteTree
 {
     private static $allowed_children = [];
 
-    private static $controller_name = PDOPageController::class;
+    private static $controller_name = NestController::class;
 
     private static $db = [
-        'PageDataObject' => 'Varchar'
+        'NestedObject' => 'Varchar'
     ];
 
     private static $indexes = [];
@@ -27,7 +27,7 @@ class PDOPage extends Page
 
     private static $defaults = [];
 
-    private static $table_name = 'PDOPage';
+    private static $table_name = 'Nest';
 
     private static $default_sort = "\"Sort\"";
 
@@ -64,14 +64,14 @@ class PDOPage extends Page
     {
         $fields = parent::getSettingsFields();
 
-        $classes = ClassInfo::getValidSubClasses(PageDataObject::class);
+        $classes = ClassInfo::getValidSubClasses(NestedObject::class);
         // $list = array_fill_keys($classes, '');
 
         $list[''] = '-';
 
         foreach($classes as $key => $class)
         {
-            if ($class::$pdo_down == PDOPage::class)
+            if ($class::$nest_down == Nest::class)
             {
                 $list[$class] = Str::of(class_basename($class))->headline();
             }
@@ -81,10 +81,10 @@ class PDOPage extends Page
           'Root.Advanced',
           [
               DropdownField::create(
-                'PageDataObject',
+                'NestedObject',
                 'Page Data Object',
                 $list,
-                $this->PageDataObject,
+                $this->NestedObject,
               )
           ]
         );
@@ -102,11 +102,11 @@ class PDOPage extends Page
         // Astrotomic\OpenGraph\OpenGraph
     }
 
-    public function PDOList()
+    public function NestedList()
     {
-        if ($this->PageDataObject)
+        if ($this->NestedObject)
         {
-            $this->PageDataObject::get();
+            $this->NestedObject::get();
         }
 
         return null;

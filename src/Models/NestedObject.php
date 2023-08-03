@@ -1,8 +1,8 @@
 <?php
 
-namespace Goldfinch\Basement\Models;
+namespace Goldfinch\Nest\Models;
 
-use App\Pages\PDOPage;
+use Goldfinch\Nest\Pages\Nest;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use gorriecoe\Link\Models\Link;
@@ -21,36 +21,33 @@ use SilverStripe\Forms\TextareaField;
 use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\Versioned;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
-use SilverStripe\Forms\ToggleCompositeField;
-use Goldfinch\Basement\Models\PageDataObject;
 use SilverStripe\View\Parsers\URLSegmentFilter;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\CMS\Controllers\ModelAsController;
 use SilverStripe\CMS\Controllers\RootURLController;
 use SilverStripe\CMS\Forms\SiteTreeURLSegmentField;
-use DNADesign\Elemental\Controllers\ElementController;
+use Goldfinch\Nest\Controllers\NestedObjectController;
 use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
 
-class PageDataObject extends DataObject implements CMSPreviewable
+class NestedObject extends DataObject implements CMSPreviewable
 {
-    public static $pdo_up = null;
-    public static $pdo_down = null;
+    public static $nest_up = null;
+    public static $nest_down = null;
 
     private static $extensions = [
         Versioned::class,
     ];
 
-    private static $singular_name = 'pagedataobject';
+    private static $singular_name = 'Nested object';
 
-    private static $plural_name = 'pagedataobjects';
+    private static $plural_name = 'Nested objects';
 
     private static $versioned_gridfield_extensions = true; // ? check if needed
 
-    private static $controller_class = ElementController::class;
+    private static $controller_class = NestedObjectController::class;
 
-    private static $controller_template = 'PageDataObjectHolder'; // ? check if needed
+    private static $controller_template = 'NestedObjectHolder'; // ? check if needed
 
-    private static $table_name = 'PageDataObject';
+    private static $table_name = 'NestedObject';
 
     private static $show_stage_link = true; // ? check if needed
 
@@ -227,8 +224,8 @@ class PageDataObject extends DataObject implements CMSPreviewable
         //   ]
         // );
 
-        $fields->addFieldToTab('Root.Settings', HistoryViewerField::create('PageDataObjectHistory'));
-        $fields->addFieldToTab('Root.History', HistoryViewerField::create('PageDataObjectHistory'));
+        $fields->addFieldToTab('Root.Settings', HistoryViewerField::create('NestedObjectHistory'));
+        $fields->addFieldToTab('Root.History', HistoryViewerField::create('NestedObjectHistory'));
 
         return $fields;
     }
@@ -297,7 +294,7 @@ class PageDataObject extends DataObject implements CMSPreviewable
         }
 
         // Check for clashing pages by url, id, and parent
-        $source = PageDataObject::get()->filter([
+        $source = NestedObject::get()->filter([
           'ClassName' => $this->ClassName,
           'URLSegment' => $this->URLSegment,
         ]);
@@ -427,12 +424,12 @@ class PageDataObject extends DataObject implements CMSPreviewable
 
     public function Link($action = null)
     {
-        return $this->PDOLink();
+        return $this->NestLink();
     }
 
     public function AbsoluteLink($action = null)
     {
-        return $this->PDOLink(true);
+        return $this->NestLink(true);
     }
 
     public function SchemaData()
@@ -445,12 +442,12 @@ class PageDataObject extends DataObject implements CMSPreviewable
         // Astrotomic\OpenGraph\OpenGraph
     }
 
-    public function PDOChildren()
+    public function NestedChildren()
     {
-        if (isset($this->ClassName::$pdo_up) && isset($this->ClassName::$pdo_up_children))
+        if (isset($this->ClassName::$nest_up) && isset($this->ClassName::$nest_up_children))
         {
-            $method = $this->ClassName::$pdo_up_children;
-            $upPDO = $this->ClassName::$pdo_up;
+            $method = $this->ClassName::$nest_up_children;
+            // $nestUp = $this->ClassName::$nest_up;
 
             $children = $this->$method();
 
@@ -460,15 +457,15 @@ class PageDataObject extends DataObject implements CMSPreviewable
         return null;
     }
 
-    public function PDOParent()
+    public function NestedParent()
     {
-        if (isset($this->ClassName::$pdo_down))
+        if (isset($this->ClassName::$nest_down))
         {
-            $current = $this->ClassName::$pdo_down;
+            $current = $this->ClassName::$nest_down;
 
-            if ($current === PDOPage::class)
+            if ($current === Nest::class)
             {
-                return $current::get()->filter('PageDataObject', $this->ClassName)->first();
+                return $current::get()->filter('NestedObject', $this->ClassName)->first();
             }
 
             $parent = $this->$current();
@@ -485,7 +482,7 @@ class PageDataObject extends DataObject implements CMSPreviewable
         }
     }
 
-    public function PDOLink($AbsoluteLink = false, $nestedLink = '')
+    public function NestLink($AbsoluteLink = false, $nestedLink = '')
     {
         // dump($this->ClassName,$this->isPublished());
         // $relativeLink = $this->RelativeLink($action);
@@ -495,23 +492,23 @@ class PageDataObject extends DataObject implements CMSPreviewable
             $nestedLink = rtrim($this->URLSegment . '/' . $nestedLink, '/');
         }
 
-        if (isset($this->ClassName::$pdo_down))
+        if (isset($this->ClassName::$nest_down))
         {
-            $current = $this->ClassName::$pdo_down;
+            $current = $this->ClassName::$nest_down;
 
-            if ($current === PDOPage::class)
+            if ($current === Nest::class)
             {
-                $pdoPage = $current::get()->filter('PageDataObject', $this->ClassName)->first();
+                $nestPage = $current::get()->filter('NestedObject', $this->ClassName)->first();
 
-                if ($pdoPage && $pdoPage->exists())
+                if ($nestPage && $nestPage->exists())
                 {
                     if ($AbsoluteLink)
                     {
-                        return $pdoPage->AbsoluteLink() . '/' . $nestedLink;
+                        return $nestPage->AbsoluteLink() . '/' . $nestedLink;
                     }
                     else
                     {
-                        return '/' . $pdoPage->URLSegment . '/' . $nestedLink;
+                        return '/' . $nestPage->URLSegment . '/' . $nestedLink;
                     }
                 }
 
@@ -529,7 +526,7 @@ class PageDataObject extends DataObject implements CMSPreviewable
 
                 if ($obj && $obj->exists())
                 {
-                    return $obj->PDOLink($AbsoluteLink, $nestedLink);
+                    return $obj->NestLink($AbsoluteLink, $nestedLink);
                 }
             }
             else

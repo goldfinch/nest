@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions;
+namespace Goldfinch\Nest\Forms\GridField;
 
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\LiteralField;
