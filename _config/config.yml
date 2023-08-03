@@ -4,7 +4,7 @@ Name: goldfinch-nest
 
 SilverStripe\Versioned\VersionedGridFieldItemRequest:
   extensions:
-    - 'Goldfinch\Nest\Form\GridField\GridFieldDetailFormItemRequestExtension'
+    - Goldfinch\Nest\Forms\GridField\GridFieldDetailFormItemRequestExtension
 
 Goldfinch\Nest\Models\NestedObject:
   extensions:
