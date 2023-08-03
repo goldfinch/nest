@@ -101,14 +101,4 @@ class Nest extends SiteTree
     {
         // Astrotomic\OpenGraph\OpenGraph
     }
-
-    public function NestedList()
-    {
-        if ($this->NestedObject)
-        {
-            $this->NestedObject::get();
-        }
-
-        return null;
-    }
 }

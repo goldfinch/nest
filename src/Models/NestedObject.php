@@ -2,11 +2,12 @@
 
 namespace Goldfinch\Nest\Models;
 
-use Goldfinch\Nest\Pages\Nest;
 use SilverStripe\Forms\Tab;
+use Goldfinch\Nest\Pages\Nest;
 use SilverStripe\Forms\TabSet;
 use gorriecoe\Link\Models\Link;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use gorriecoe\LinkField\LinkField;
@@ -31,7 +32,9 @@ use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
 class NestedObject extends DataObject implements CMSPreviewable
 {
     public static $nest_up = null;
+    public static $nest_up_children = [];
     public static $nest_down = null;
+    public static $nest_down_parents = [];
 
     private static $extensions = [
         Versioned::class,
@@ -104,7 +107,10 @@ class NestedObject extends DataObject implements CMSPreviewable
     {
         $result = parent::validate();
 
-        // $result->addError('Error message');
+        if (!$this->Title)
+        {
+            $result->addError('Title is required');
+        }
 
         return $result;
     }
@@ -442,46 +448,6 @@ class NestedObject extends DataObject implements CMSPreviewable
         // Astrotomic\OpenGraph\OpenGraph
     }
 
-    public function NestedChildren()
-    {
-        if (isset($this->ClassName::$nest_up) && isset($this->ClassName::$nest_up_children))
-        {
-            $method = $this->ClassName::$nest_up_children;
-            // $nestUp = $this->ClassName::$nest_up;
-
-            $children = $this->$method();
-
-            return $children;
-        }
-
-        return null;
-    }
-
-    public function NestedParent()
-    {
-        if (isset($this->ClassName::$nest_down))
-        {
-            $current = $this->ClassName::$nest_down;
-
-            if ($current === Nest::class)
-            {
-                return $current::get()->filter('NestedObject', $this->ClassName)->first();
-            }
-
-            $parent = $this->$current();
-
-            if (is_subclass_of($parent, RelationList::class))
-            {
-                // multiple
-                return $parent->first();
-            }
-            else
-            {
-                // single, belongs to ..
-            }
-        }
-    }
-
     public function NestLink($AbsoluteLink = false, $nestedLink = '')
     {
         // dump($this->ClassName,$this->isPublished());
@@ -541,4 +507,78 @@ class NestedObject extends DataObject implements CMSPreviewable
 
         return '';
     }
+
+    public function isUpNested()
+    {
+        return isset($this->ClassName::$nest_up) && $this->ClassName::$nest_up;
+    }
+
+    public function isDownNested()
+    {
+        return isset($this->ClassName::$nest_down) && $this->ClassName::$nest_down;
+    }
+
+    public function upNestedClass()
+    {
+        return $this->isUpNested() ? $this->ClassName::$nest_up : null;
+    }
+
+    public function downNestedClass()
+    {
+        return $this->isDownNested() ? $this->ClassName::$nest_down : null;
+    }
+
+    // public function NestedChildren()
+    // {
+    //     if (
+    //       isset($this->ClassName::$nest_up) &&
+    //       $this->ClassName::$nest_up &&
+    //       isset($this->ClassName::$nest_up_children) &&
+    //       is_array($this->ClassName::$nest_up_children) &&
+    //       !empty($this->ClassName::$nest_up_children)
+    //     )
+    //     {
+    //         $list = new ArrayList;
+
+    //         foreach($this->ClassName::$nest_up_children as $method)
+    //         {
+    //             $list->push(ArrayData::create(['Relationship' => $method, 'List' => $this->$method()]));
+    //         }
+
+    //         return $list;
+    //     }
+
+    //     return null;
+    // }
+
+    // public function NestedParents()
+    // {
+    //     if (
+    //       isset($this->ClassName::$nest_down) &&
+    //       $this->ClassName::$nest_down &&
+    //       isset($this->ClassName::$nest_down_parents) &&
+    //       is_array($this->ClassName::$nest_down_parents) &&
+    //       !empty($this->ClassName::$nest_down_parents)
+    //     )
+    //     {
+    //         $current = $this->ClassName::$nest_down;
+
+    //         if ($current === Nest::class)
+    //         {
+    //             return $current::get()->filter('NestedObject', $this->ClassName)->first();
+    //         }
+
+    //         $parent = $this->$current();
+
+    //         if (is_subclass_of($parent, RelationList::class))
+    //         {
+    //             // multiple
+    //             return $parent->first();
+    //         }
+    //         else
+    //         {
+    //             // single, belongs to ..
+    //         }
+    //     }
+    // }
 }

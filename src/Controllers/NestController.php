@@ -2,6 +2,7 @@
 
 namespace Goldfinch\Nest\Controllers;
 
+use SilverStripe\View\SSViewer;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\CMS\Controllers\ContentController;
 
@@ -80,9 +81,22 @@ class NestController extends ContentController
                             // return $this->customise($nest)->renderWith(['App\Models\BlogPost', 'Layout']);
                             // return $this->renderWith('Nest', 'Page');
                             // return $nest->renderWith(['Page']);
-                            return $this->customise([
-                              'Layout' => $nest->renderWith('App\Models\BlogPost')
-                            ])->renderWith('Page');
+
+                            // dd($nest->getViewerTemplates());
+
+                            // dd(SSViewer::create($nest->ClassName));
+                            if (SSViewer::chooseTemplate($nest->ClassName))
+                            {
+                                return $this->customise([
+                                  'Layout' => $nest->renderWith($nest->ClassName)
+                                ])->renderWith('Page');
+                            }
+                            else
+                            {
+                                return $this->customise([
+                                  'Layout' => $nest->renderWith('Goldfinch\Nest\Models\NestedObject')
+                                ])->renderWith('Page');
+                            }
                         }
                     }
                 }
@@ -99,5 +113,15 @@ class NestController extends ContentController
         parent::init();
 
         // ..
+    }
+
+    public function NestedList()
+    {
+        if ($this->NestedObject)
+        {
+            return $this->NestedObject::get();
+        }
+
+        return null;
     }
 }

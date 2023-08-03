@@ -8,6 +8,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Forms\GridField\AbstractGridFieldComponent;
 use SilverStripe\Forms\GridField\GridField_ActionMenuLink;
 use SilverStripe\Forms\GridField\GridField_ColumnProvider;
+use SilverStripe\Forms\GridField\GridField_ActionMenuItem;
 
 /**
  * A button that allows a user to view readonly details of a record. This is

@@ -7,10 +7,12 @@ use SilverStripe\Forms\GridField\GridFieldDetailForm;
 use SilverStripe\Forms\GridField\GridFieldEditButton;
 use SilverStripe\Forms\GridField\GridField_ActionMenu;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridFieldFilterHeader;
 use SilverStripe\Forms\GridField\GridFieldToolbarHeader;
 use SilverStripe\Forms\GridField\GridFieldSortableHeader;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 
 class GridFieldNestConfig extends GridFieldConfig
 {
@@ -20,6 +22,8 @@ class GridFieldNestConfig extends GridFieldConfig
 
         $this->addComponents(
             // GridFieldFilterHeader::create(),
+            GridFieldAddNewButton::create(),
+            GridFieldAddExistingAutocompleter::create(),
             GridFieldToolbarHeader::create(),
             GridFieldSortableHeader::create(),
             GridFieldDataColumns::create(),
@@ -27,7 +31,7 @@ class GridFieldNestConfig extends GridFieldConfig
             GridFieldDeleteAction::create(),
             GridFieldEditButton::create(),
             GridFieldViewNestButton::create(),
-            // GridField_ActionMenu::create(),
+            GridField_ActionMenu::create(),
         );
 
         $dataColumns = $this->getComponentByType(GridFieldDataColumns::class);
