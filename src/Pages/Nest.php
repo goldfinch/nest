@@ -33,7 +33,7 @@ class Nest extends SiteTree
 
     private static $icon = null;
 
-    private static $icon_class = 'font-icon-page';
+    private static $icon_class = 'bi-file-earmark-post';
 
     private static $searchable_fields = [];
 
