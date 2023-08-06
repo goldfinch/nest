@@ -105,7 +105,7 @@ class NestController extends ContentController
             return $this->httpError(404);
         }
 
-        return $this;
+        return $this->renderWith('Page', ['Layout' => $this->renderWith($this->ClassName)]);
     }
 
     protected function init()
