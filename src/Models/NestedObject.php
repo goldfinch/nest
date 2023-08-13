@@ -474,7 +474,14 @@ class NestedObject extends DataObject implements CMSPreviewable
                     }
                     else
                     {
-                        return '/' . $nestPage->URLSegment . '/' . $nestedLink;
+                        $link = '/' . $nestPage->URLSegment . '/';
+
+                        while($nestPage = $nestPage->getParent())
+                        {
+                            $link = '/' . $nestPage->URLSegment . $link;
+                        }
+
+                        return $link . $nestedLink;
                     }
                 }
 
@@ -526,6 +533,24 @@ class NestedObject extends DataObject implements CMSPreviewable
     public function downNestedClass()
     {
         return $this->isDownNested() ? $this->ClassName::$nest_down : null;
+    }
+
+    public function getNestedParent()
+    {
+        if ($this->isUpNested())
+        {
+            // only Nest page as parent
+            if (Nest::class === $this->upNestedClass())
+            {
+                return $this->upNestedClass()::get()->filter('NestedObject', $this->ClassName)->first();
+            }
+            else
+            {
+                // TODO? DataObject ...
+            }
+        }
+
+        return null;
     }
 
     // public function NestedChildren()

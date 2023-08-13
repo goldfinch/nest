@@ -75,6 +75,13 @@ class NestController extends ContentController
                         $current_tree = array_values($params);
                         array_unshift($current_tree, $this->URLSegment);
 
+                        $page = $this;
+
+                        while($page = $page->getParent())
+                        {
+                            array_unshift($current_tree, $page->URLSegment);
+                        }
+
                         if ($nested_tree === $current_tree)
                         {
                             // return $nest->renderWith(['BlogPost', 'Page']);
@@ -87,6 +94,9 @@ class NestController extends ContentController
                             // dd(SSViewer::create($nest->ClassName));
                             if (SSViewer::chooseTemplate($nest->ClassName))
                             {
+                                $this->MetaTitle = $nest->MetaTitle;
+                                $this->MetaDescription = $nest->MetaDescription;
+
                                 return $this->customise([
                                   'Layout' => $nest->renderWith($nest->ClassName)
                                 ])->renderWith('Page');

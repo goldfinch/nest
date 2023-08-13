@@ -11,7 +11,9 @@ use SilverStripe\CMS\Model\SiteTree;
 
 class Nest extends SiteTree
 {
-    private static $allowed_children = [];
+    private static $allowed_children = [
+        Nest::class,
+    ];
 
     private static $controller_name = NestController::class;
 
@@ -90,6 +92,16 @@ class Nest extends SiteTree
         );
 
         return $fields;
+    }
+
+    public function getNestedList()
+    {
+        if ($this->NestedObject)
+        {
+            return $this->NestedObject::get();
+        }
+
+        return null;
     }
 
     public function SchemaData()
