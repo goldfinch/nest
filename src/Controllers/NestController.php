@@ -115,6 +115,18 @@ class NestController extends ContentController
             return $this->httpError(404);
         }
 
+        if ($this->NestedPseudo)
+        {
+            if ($this->NestedRedirectPageID)
+            {
+                return $this->redirect($this->NestedRedirectPage()->Link(), 301);
+            }
+            else
+            {
+                return $this->httpError(404);
+            }
+        }
+
         return $this->renderWith('Page', ['Layout' => $this->renderWith($this->ClassName)]);
     }
 
