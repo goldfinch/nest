@@ -7,12 +7,12 @@ use Goldfinch\Taz\Services\InputOutput;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 
-#[AsCommand(name: 'make:nestobject')]
+#[AsCommand(name: 'make:nest')]
 class MakeNestObjectCommand extends GeneratorCommand
 {
-    protected static $defaultName = 'make:nestobject';
+    protected static $defaultName = 'make:nest';
 
-    protected $description = 'Create new Nest Object';
+    protected $description = 'Create new Nest Object & Template';
 
     protected $path = 'app/src/Models';
 
