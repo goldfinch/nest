@@ -5,6 +5,7 @@ namespace Goldfinch\Nest\Commands;
 use Goldfinch\Taz\Console\GeneratorCommand;
 use Goldfinch\Taz\Services\InputOutput;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 
 #[AsCommand(name: 'make:nestobject')]
 class MakeNestObjectCommand extends GeneratorCommand
