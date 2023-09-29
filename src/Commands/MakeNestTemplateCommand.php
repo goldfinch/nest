@@ -6,10 +6,10 @@ use Goldfinch\Taz\Console\GeneratorCommand;
 use Goldfinch\Taz\Services\InputOutput;
 use Symfony\Component\Console\Command\Command;
 
-#[AsCommand(name: 'make:nesttemplate')]
+#[AsCommand(name: 'make:nest-template')]
 class MakeNestTemplateCommand extends GeneratorCommand
 {
-    protected static $defaultName = 'make:nesttemplate';
+    protected static $defaultName = 'make:nest-template';
 
     protected $description = 'Create new Nest template';
 

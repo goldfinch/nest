@@ -25,6 +25,19 @@ class MakeNestObjectCommand extends GeneratorCommand
     {
         parent::execute($input, $output);
 
+        $nameInput = $this->getAttrName($input);
+
+        // Nest template
+
+        $command = $this->getApplication()->find('make:nest-template');
+
+        $arguments = [
+            'name'    => $nameInput,
+        ];
+
+        $greetInput = new ArrayInput($arguments);
+        $returnCode = $command->run($greetInput, $output);
+
         return Command::SUCCESS;
     }
 }
