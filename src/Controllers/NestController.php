@@ -16,7 +16,7 @@ class NestController extends ContentController
 
     private $nested_tree = [];
 
-    public function index(HTTPRequest $request)
+    public function getNestedObjectModel($request = null)
     {
         $params = $request->latestParams();
 
@@ -84,31 +84,53 @@ class NestController extends ContentController
 
                         if ($nested_tree === $current_tree)
                         {
-                            // return $nest->renderWith(['BlogPost', 'Page']);
-                            // return $this->customise($nest)->renderWith(['App\Models\BlogPost', 'Layout']);
-                            // return $this->renderWith('Nest', 'Page');
-                            // return $nest->renderWith(['Page']);
-
-                            // dd($nest->getViewerTemplates());
-
-                            // dd(SSViewer::create($nest->ClassName));
-                            if (SSViewer::chooseTemplate($nest->ClassName))
-                            {
-                                $this->MetaTitle = $nest->MetaTitle;
-                                $this->MetaDescription = $nest->MetaDescription;
-
-                                return $this->customise([
-                                  'Layout' => $nest->renderWith($nest->ClassName)
-                                ])->renderWith('Page');
-                            }
-                            else
-                            {
-                                return $this->customise([
-                                  'Layout' => $nest->renderWith('Goldfinch\Nest\Models\NestedObject')
-                                ])->renderWith('Page');
-                            }
+                            return $nest;
                         }
                     }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function index(HTTPRequest $request)
+    {
+        $params = $request->latestParams();
+
+        if (count($params))
+        {
+            $nest = $this->getNestedObjectModel($request);
+
+            if ($nest)
+            {
+                if (SSViewer::chooseTemplate($nest->ClassName))
+                {
+                    if ($nest->MetaTitle)
+                    {
+                        $this->MetaTitle = $nest->MetaTitle;
+                    }
+                    else if ($nest->Title)
+                    {
+                        $this->MetaTitle = $nest->Title . ' - ' . $this->Title;
+                    }
+
+                    if ($nest->MetaDescription)
+                    {
+                        $this->MetaDescription = $nest->MetaDescription;
+                    }
+
+                    $nest = $this->nestExtend($nest);
+
+                    return $this->customise([
+                      'Layout' => $nest->renderWith($nest->ClassName)
+                    ])->renderWith('Page');
+                }
+                else
+                {
+                    return $this->customise([
+                      'Layout' => $nest->renderWith('Goldfinch\Nest\Models\NestedObject')
+                    ])->renderWith('Page');
                 }
             }
 
@@ -145,5 +167,11 @@ class NestController extends ContentController
         }
 
         return null;
+    }
+
+    // this method is used to extend from child controller
+    public function nestExtend($nest)
+    {
+        return $nest;
     }
 }
