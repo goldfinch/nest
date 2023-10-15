@@ -9,3 +9,7 @@ SilverStripe\Versioned\VersionedGridFieldItemRequest:
 Goldfinch\Nest\Models\NestedObject:
   extensions:
     - SilverStripe\Admin\CMSEditLinkExtension
+
+Goldfinch\Nest\Controllers\NestController:
+  extensions:
+    - Goldfinch\Seo\Extensions\MetaUniverse

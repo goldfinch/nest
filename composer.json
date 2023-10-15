@@ -16,6 +16,7 @@
         "gorriecoe/silverstripe-linkfield": "^1.1",
         "unclecheese/display-logic": "^3.0",
         "wilr/silverstripe-googlesitemaps": "^3.0",
+        "goldfinch/seo": "dev-main",
         "laravel/helpers": "^1.6"
     },
     "autoload": {
