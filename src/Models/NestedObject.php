@@ -537,12 +537,12 @@ class NestedObject extends DataObject implements CMSPreviewable
 
     public function getNestedParent()
     {
-        if ($this->isUpNested())
+        if ($this->isDownNested())
         {
             // only Nest page as parent
-            if (Nest::class === $this->upNestedClass())
+            if (Nest::class === $this->downNestedClass())
             {
-                return $this->upNestedClass()::get()->filter('NestedObject', $this->ClassName)->first();
+                return $this->downNestedClass()::get()->filter('NestedObject', $this->ClassName)->first();
             }
             else
             {
