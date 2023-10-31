@@ -69,21 +69,6 @@ class NestedObject extends DataObject implements CMSPreviewable
         'ShowOnlyToRobots' => 'Boolean',
     ];
 
-    // private static $casting = [];
-
-    // private static $indexes = null;
-
-    // private static $defaults = [];
-
-    // private static $belongs_to = [];
-    // private static $has_many = [];
-    // private static $has_one = [
-    //     // 'ShowOnlyToRobots_Backlink' => Link::class,
-    // ];
-    // private static $many_many = [];
-    // private static $many_many_extraFields = [];
-    // private static $belongs_many_many = [];
-
     private static $default_sort = 'LastEdited';
 
     private static $searchable_fields = [
@@ -98,8 +83,6 @@ class NestedObject extends DataObject implements CMSPreviewable
         'URLSegment' => 'URL',
         'MenuTitle' => 'Navigation title',
     ];
-
-    // private static $summary_fields = [];
 
     private static $runCMSFieldsExtensions = true;
 
