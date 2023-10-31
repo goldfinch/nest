@@ -26,13 +26,13 @@ class Nest extends SiteTree
         'NestedPseudo' => 'Boolean',
     ];
 
-    private static $indexes = [];
+    // private static $indexes = [];
 
-    private static $owned_by = [];
+    // private static $owned_by = [];
 
-    private static $casting = [];
+    // private static $casting = [];
 
-    private static $defaults = [];
+    // private static $defaults = [];
 
     private static $table_name = 'Nest';
 
@@ -46,11 +46,11 @@ class Nest extends SiteTree
 
     private static $icon_class = 'bi-file-earmark-post';
 
-    private static $searchable_fields = [];
+    // private static $searchable_fields = [];
 
-    private static $field_labels = [];
+    // private static $field_labels = [];
 
-    private static $description = null;
+    // private static $description = null;
 
     private static $base_description = 'Generic content page';
 
@@ -123,15 +123,5 @@ class Nest extends SiteTree
         }
 
         return null;
-    }
-
-    public function SchemaData()
-    {
-        // Spatie\SchemaOrg\Schema
-    }
-
-    public function OpenGraph()
-    {
-        // Astrotomic\OpenGraph\OpenGraph
     }
 }

@@ -69,20 +69,20 @@ class NestedObject extends DataObject implements CMSPreviewable
         'ShowOnlyToRobots' => 'Boolean',
     ];
 
-    private static $casting = [];
+    // private static $casting = [];
 
-    private static $indexes = null;
+    // private static $indexes = null;
 
-    private static $defaults = [];
+    // private static $defaults = [];
 
-    private static $belongs_to = [];
-    private static $has_many = [];
-    private static $has_one = [
-        // 'ShowOnlyToRobots_Backlink' => Link::class,
-    ];
-    private static $many_many = [];
-    private static $many_many_extraFields = [];
-    private static $belongs_many_many = [];
+    // private static $belongs_to = [];
+    // private static $has_many = [];
+    // private static $has_one = [
+    //     // 'ShowOnlyToRobots_Backlink' => Link::class,
+    // ];
+    // private static $many_many = [];
+    // private static $many_many_extraFields = [];
+    // private static $belongs_many_many = [];
 
     private static $default_sort = 'LastEdited';
 
@@ -99,7 +99,7 @@ class NestedObject extends DataObject implements CMSPreviewable
         'MenuTitle' => 'Navigation title',
     ];
 
-    private static $summary_fields = [];
+    // private static $summary_fields = [];
 
     private static $runCMSFieldsExtensions = true;
 
@@ -236,25 +236,25 @@ class NestedObject extends DataObject implements CMSPreviewable
         return $fields;
     }
 
-    public function canView($member = null)
-    {
-        return true; // Permission::check('ADMIN', 'any', $member);
-    }
+    // public function canView($member = null)
+    // {
+    //     return true; // Permission::check('ADMIN', 'any', $member);
+    // }
 
-    public function canEdit($member = null)
-    {
-        return Permission::check('ADMIN', 'any', $member);
-    }
+    // public function canEdit($member = null)
+    // {
+    //     return Permission::check('ADMIN', 'any', $member);
+    // }
 
-    public function canDelete($member = null)
-    {
-        return Permission::check('ADMIN', 'any', $member);
-    }
+    // public function canDelete($member = null)
+    // {
+    //     return Permission::check('ADMIN', 'any', $member);
+    // }
 
-    public function canCreate($member = null, $context = [])
-    {
-        return Permission::check('ADMIN', 'any', $member);
-    }
+    // public function canCreate($member = null, $context = [])
+    // {
+    //     return Permission::check('ADMIN', 'any', $member);
+    // }
 
     protected function onBeforeWrite()
     {
@@ -436,16 +436,6 @@ class NestedObject extends DataObject implements CMSPreviewable
     public function AbsoluteLink($action = null)
     {
         return $this->NestLink(true);
-    }
-
-    public function SchemaData()
-    {
-        // Spatie\SchemaOrg\Schema
-    }
-
-    public function OpenGraph()
-    {
-        // Astrotomic\OpenGraph\OpenGraph
     }
 
     public function NestLink($AbsoluteLink = false, $nestedLink = '')
