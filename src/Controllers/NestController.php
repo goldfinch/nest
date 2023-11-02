@@ -16,6 +16,8 @@ class NestController extends ContentController
 
     private $nested_tree = [];
 
+    private $nestObject;
+
     public function getNestedObjectModel($request = null)
     {
         $params = $request->latestParams();
@@ -84,6 +86,8 @@ class NestController extends ContentController
 
                         if ($nested_tree === $current_tree)
                         {
+                            $this->nestObject = $nest;
+
                             return $nest;
                         }
                     }
@@ -173,5 +177,11 @@ class NestController extends ContentController
     public function nestExtend($nest)
     {
         return $nest;
+    }
+
+    public function CMSEditLink()
+    {
+        return $this->nestObject->CMSEditLink();
+        // return $this->getNestedObject()->CMSEditLink();
     }
 }
