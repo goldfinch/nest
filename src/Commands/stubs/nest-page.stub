@@ -1,0 +1,10 @@
+<?php
+{{ namespace }}
+use Goldfinch\Nest\Pages\Nest;
+use {{ namespace_root }}Controllers\{{ class }}Controller;
+
+class {{ class }} extends Nest
+{
+    private static $table_name = '{{ class }}';
+    private static $controller_name = {{ class }}Controller::class;
+}

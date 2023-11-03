@@ -1,0 +1,8 @@
+<?php
+{{ namespace }}
+use Goldfinch\Nest\Controllers\NestController;
+
+class {{ class }} extends NestController
+{
+    // ..
+}
