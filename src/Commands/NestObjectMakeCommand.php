@@ -5,18 +5,18 @@ namespace Goldfinch\Nest\Commands;
 use Goldfinch\Taz\Console\GeneratorCommand;
 use Symfony\Component\Console\Command\Command;
 
-#[AsCommand(name: 'make:nest-model')]
+#[AsCommand(name: 'make:nest-object')]
 class NestObjectMakeCommand extends GeneratorCommand
 {
-    protected static $defaultName = 'make:nest-model';
+    protected static $defaultName = 'make:nest-object';
 
-    protected $description = 'Create a new nest-model class';
+    protected $description = 'Create a new nest-object class';
 
     protected $path = 'app/src/Models/Nest';
 
-    protected $type = 'nest model';
+    protected $type = 'nest object';
 
-    protected $stub = 'nest-model.stub';
+    protected $stub = 'nest-object.stub';
 
     protected $prefix = '';
 
