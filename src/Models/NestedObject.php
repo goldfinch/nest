@@ -11,6 +11,7 @@ use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use gorriecoe\LinkField\LinkField;
+use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Control\Director;
 use SilverStripe\ORM\RelationList;
 use SilverStripe\Control\Controller;
@@ -353,9 +354,16 @@ class NestedObject extends DataObject implements CMSPreviewable
         return 'text/html';
     }
 
+    /**
+     * Default cmsedit link for NestedObject
+     * TODO: if no modeladmin is defined for the object, what link to use instead?
+     */
     public function CMSEditLink()
     {
-        return $this->extend('CMSEditLink')[0] ?? '';
+        // return $this->extend('CMSEditLink')[0] ?? '';
+        // $admin = new ModelAdmin;
+        // return Director::absoluteBaseURL() . '/' . $admin->getCMSEditLinkForManagedDataObject($this);
+        return null;
     }
 
     public function Parent()
