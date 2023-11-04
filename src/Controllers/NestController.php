@@ -181,7 +181,7 @@ class NestController extends ContentController
 
     public function CMSEditLink()
     {
-        return $this->nestObject->CMSEditLink();
+        return $this->nestObject ? $this->nestObject->CMSEditLink() : parent::CMSEditLink();
         // return $this->getNestedObject()->CMSEditLink();
     }
 }
