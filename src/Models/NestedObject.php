@@ -542,10 +542,18 @@ class NestedObject extends DataObject implements CMSPreviewable
 
     public function HTMLLink()
     {
-        $link = $this->Link();
-
         $html = DBHTMLText::create();
-        $html->setValue('<a onclick="event.stopPropagation();" target="_blank" href="' . $link . '">' . $this->URLSegment . '</a>');
+
+        if ($this->isDownNested())
+        {
+            $link = $this->Link();
+
+            $html->setValue('<a onclick="event.stopPropagation();" target="_blank" href="' . $link . '">' . $this->URLSegment . '</a>');
+        }
+        else
+        {
+            $html->setValue('-');
+        }
 
         return $html;
     }
