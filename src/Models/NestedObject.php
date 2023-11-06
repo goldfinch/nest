@@ -443,7 +443,7 @@ class NestedObject extends DataObject implements CMSPreviewable
         {
             $current = $this->ClassName::$nest_down;
 
-            if ($current === Nest::class)
+            if ($current && ($current == Nest::class || get_parent_class($current) == Nest::class))
             {
                 $nestPage = $current::get()->filter('NestedObject', $this->ClassName)->first();
 

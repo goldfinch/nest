@@ -1,12 +1,13 @@
 <?php
 {{ namespace }}
+use Goldfinch\Nest\Pages\Nest;
 use Goldfinch\Nest\Models\NestedObject;
 
 class {{ class }} extends NestedObject
 {
     public static $nest_up = null;
     public static $nest_up_children = [];
-    public static $nest_down = null;
+    public static $nest_down = Nest::class; // or custom one
     public static $nest_down_parents = [];
 
     private static $table_name = '{{ class }}';
