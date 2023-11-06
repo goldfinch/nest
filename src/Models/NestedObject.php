@@ -22,6 +22,7 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\Versioned;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 use SilverStripe\View\Parsers\URLSegmentFilter;
 use SilverStripe\CMS\Controllers\ModelAsController;
@@ -83,6 +84,11 @@ class NestedObject extends DataObject implements CMSPreviewable
         'Title' => 'Page name',
         'URLSegment' => 'URL',
         'MenuTitle' => 'Navigation title',
+    ];
+
+    private static $summary_fields = [
+        'Title' => 'Title',
+        'HTMLLink' => 'Preview',
     ];
 
     private static $runCMSFieldsExtensions = true;
@@ -532,6 +538,16 @@ class NestedObject extends DataObject implements CMSPreviewable
         }
 
         return null;
+    }
+
+    public function HTMLLink()
+    {
+        $link = $this->Link();
+
+        $html = DBHTMLText::create();
+        $html->setValue('<a onclick="event.stopPropagation();" target="_blank" href="' . $link . '">' . $this->URLSegment . '</a>');
+
+        return $html;
     }
 
     // public function NestedChildren()
