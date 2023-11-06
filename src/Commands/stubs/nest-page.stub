@@ -1,7 +1,7 @@
 <?php
 {{ namespace }}
 use Goldfinch\Nest\Pages\Nest;
-use {{ namespace_root }}Controllers\{{ class }}Controller;
+use {{ namespace_root }}Controllers\Nest\{{ class }}Controller;
 
 class {{ class }} extends Nest
 {
