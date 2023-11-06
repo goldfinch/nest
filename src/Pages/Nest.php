@@ -82,7 +82,7 @@ class Nest extends SiteTree
 
         foreach($classes as $key => $class)
         {
-            if ($class::$nest_down == Nest::class)
+            if ($class::$nest_down && ($class::$nest_down == Nest::class || get_parent_class($class::$nest_down) == Nest::class))
             {
                 $list[$class] = Str::of(class_basename($class))->headline();
             }
