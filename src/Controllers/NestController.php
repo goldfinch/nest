@@ -127,6 +127,7 @@ class NestController extends ContentController
                     $nest = $this->nestExtend($nest);
 
                     return $this->customise([
+                      'IsObject' => true,
                       'Layout' => $nest->renderWith($nest->ClassName)
                     ])->renderWith('Page');
                 }
@@ -153,7 +154,9 @@ class NestController extends ContentController
             }
         }
 
-        return $this->renderWith('Page', ['Layout' => $this->renderWith($this->ClassName)]);
+        return $this->renderWith('Page', [
+          'Layout' => $this->renderWith($this->ClassName)
+        ]);
     }
 
     protected function init()
