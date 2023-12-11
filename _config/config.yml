@@ -8,3 +8,15 @@ SilverStripe\Versioned\VersionedGridFieldItemRequest:
 Goldfinch\Nest\Models\NestedObject:
   extensions:
     - SilverStripe\Admin\CMSEditLinkExtension
+
+
+---
+Name: goldfinch-nest-icon
+Only:
+  moduleexists: 'goldfinch/enchantment'
+---
+
+Goldfinch\Nest\Pages\Nest:
+  icon_class: 'bi-file-earmark-post'
+
+
