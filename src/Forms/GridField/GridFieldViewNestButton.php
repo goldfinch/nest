@@ -38,8 +38,15 @@ class GridFieldViewNestButton extends AbstractGridFieldComponent implements Grid
      */
     public function getExtraData($gridField, $record, $columnName)
     {
+        $icon = 'font-icon-eye';
+
+        if(class_exists(\Goldfinch\Enchantment\Helpers\BuildHelper))
+        {
+            $icon = 'bi bi-binoculars-fill';
+        }
+
         return [
-            "classNames" => "bi bi-binoculars-fill"
+            "classNames" => $icon,
         ];
     }
 
@@ -69,12 +76,20 @@ class GridFieldViewNestButton extends AbstractGridFieldComponent implements Grid
         if (!$record->canView()) {
             return null;
         }
+
+        $icon = 'font-icon-eye';
+
+        if(class_exists(\Goldfinch\Enchantment\Helpers\BuildHelper))
+        {
+            $icon = 'bi bi-binoculars-fill';
+        }
+
         // $data = new ArrayData([
         //     'Link' => $this->getURL($field, $record, $col),
         // ]);
         // $template = SSViewer::get_templates_by_class($this, '', __CLASS__);
         // return $data->renderWith($template);
-        return '<a title="View on the website" target="_blank" class="grid-field__icon-action bi bi-binoculars-fill action action-detail view-link action-menu--handled" href="javascript:window.open(\''.$record->Link().'\',\'_blank\')">
+        return '<a title="View on the website" target="_blank" class="grid-field__icon-action '.$icon.' action action-detail view-link action-menu--handled" href="javascript:window.open(\''.$record->Link().'\',\'_blank\')">
     <span class="sr-only">View</span>
 </a>
 ';
