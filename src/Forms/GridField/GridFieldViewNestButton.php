@@ -9,6 +9,7 @@ use SilverStripe\Forms\GridField\AbstractGridFieldComponent;
 use SilverStripe\Forms\GridField\GridField_ActionMenuLink;
 use SilverStripe\Forms\GridField\GridField_ColumnProvider;
 use SilverStripe\Forms\GridField\GridField_ActionMenuItem;
+use Goldfinch\Enchantment\Helpers\BuildHelper;
 
 /**
  * A button that allows a user to view readonly details of a record. This is
@@ -40,7 +41,7 @@ class GridFieldViewNestButton extends AbstractGridFieldComponent implements Grid
     {
         $icon = 'font-icon-eye';
 
-        if(class_exists(\Goldfinch\Enchantment\Helpers\BuildHelper))
+        if(class_exists(BuildHelper::class))
         {
             $icon = 'bi bi-binoculars-fill';
         }
@@ -79,7 +80,7 @@ class GridFieldViewNestButton extends AbstractGridFieldComponent implements Grid
 
         $icon = 'font-icon-eye';
 
-        if(class_exists(\Goldfinch\Enchantment\Helpers\BuildHelper))
+        if(class_exists(BuildHelper::class))
         {
             $icon = 'bi bi-binoculars-fill';
         }

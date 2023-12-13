@@ -4,6 +4,7 @@ namespace Goldfinch\Nest\Forms\GridField;
 
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\LiteralField;
+use Goldfinch\Enchantment\Helpers\BuildHelper;
 
 class GridFieldDetailFormItemRequestExtension extends Extension
 {
@@ -14,7 +15,7 @@ class GridFieldDetailFormItemRequestExtension extends Extension
         {
             $icon = 'font-icon-eye';
 
-            if(class_exists(\Goldfinch\Enchantment\Helpers\BuildHelper))
+            if(class_exists(BuildHelper::class))
             {
                 $icon = 'bi bi-binoculars-fill';
             }
