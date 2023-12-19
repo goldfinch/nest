@@ -5,12 +5,11 @@ namespace Goldfinch\Nest\Models;
 use SilverStripe\Forms\Tab;
 use Goldfinch\Nest\Pages\Nest;
 use SilverStripe\Forms\TabSet;
-use gorriecoe\Link\Models\Link;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use gorriecoe\LinkField\LinkField;
+use SilverStripe\AnyField\Form\AnyField;
 use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Control\Director;
 use SilverStripe\ORM\RelationList;
@@ -165,7 +164,7 @@ class NestedObject extends DataObject implements CMSPreviewable
 
                         Wrapper::create(
 
-                          LinkField::create('ShowOnlyToRobots_BackLink', 'Back link for users', $this->owner),
+                          AnyField::create('ShowOnlyToRobots_BackLink', 'Back link for users'),
 
                         )->displayIf('ShowOnlyToRobots')->isChecked()->end(),
                       )

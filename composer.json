@@ -14,7 +14,8 @@
         "silverstripe/framework": "^5.0",
         "silverstripe/admin": "^2.0",
         "goldfinch/seo": "^1.0",
-        "gorriecoe/silverstripe-linkfield": "^1.1",
+        "maxime-rainville/anyfield": "^0.0.0",
+        "silverstripe/linkfield": "^3",
         "unclecheese/display-logic": "^3.0",
         "wilr/silverstripe-googlesitemaps": "^3.0",
         "laravel/helpers": "^1.6"
