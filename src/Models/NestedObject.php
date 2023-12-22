@@ -162,11 +162,11 @@ class NestedObject extends DataObject implements CMSPreviewable
 
                         CheckboxField::create('ShowOnlyToRobots', 'Show only to robots'),
 
-                        Wrapper::create(
+                        // Wrapper::create(
 
-                          AnyField::create('ShowOnlyToRobots_BackLink', 'Back link for users'),
+                        //   AnyField::create('ShowOnlyToRobots_BackLink', 'Back link for users'),
 
-                        )->displayIf('ShowOnlyToRobots')->isChecked()->end(),
+                        // )->displayIf('ShowOnlyToRobots')->isChecked()->end(),
                       )
                     ),
                 )
