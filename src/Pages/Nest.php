@@ -4,6 +4,7 @@ namespace Goldfinch\Nest\Pages;
 
 use Illuminate\Support\Str;
 use Goldfinch\Nest\Pages\Nest;
+use Composer\InstalledVersions;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\CheckboxField;
@@ -57,8 +58,10 @@ class Nest extends SiteTree
             }
         }
 
+        $tabName = InstalledVersions::isInstalled('goldfinch/basement') ? 'Root.Advanced' : 'Root.Settings';
+
         $fields->addFieldsToTab(
-          'Root.Advanced',
+          $tabName,
           [
               DropdownField::create(
                 'NestedObject',
