@@ -2,10 +2,10 @@
 
 namespace Goldfinch\Nest\Controllers;
 
-use Goldfinch\Nest\Models\NestedObject;
-use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\View\Requirements;
+use SilverStripe\Control\Controller;
+use Goldfinch\Nest\Models\NestedObject;
 
 class NestedObjectController extends Controller
 {

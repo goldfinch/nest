@@ -15,28 +15,20 @@ use Goldfinch\Nest\Controllers\NestController;
 
 class Nest extends SiteTree
 {
+    private static $controller_name = NestController::class;
+
+    private static $table_name = 'Nest';
+
+    private static $default_sort = "\"Sort\"";
+
     private static $allowed_children = [
         Nest::class,
     ];
-
-    private static $controller_name = NestController::class;
 
     private static $db = [
         'NestedObject' => 'Varchar',
         'NestedPseudo' => 'Boolean',
     ];
-
-    // private static $indexes = [];
-
-    // private static $owned_by = [];
-
-    // private static $casting = [];
-
-    // private static $defaults = [];
-
-    private static $table_name = 'Nest';
-
-    private static $default_sort = "\"Sort\"";
 
     private static $has_one = [
         'NestedRedirectPage' => SiteTree::class,
@@ -46,30 +38,7 @@ class Nest extends SiteTree
 
     private static $icon_class = 'font-icon-p-alt';
 
-    // private static $searchable_fields = [];
-
-    // private static $field_labels = [];
-
-    // private static $description = null;
-
     private static $base_description = 'Generic content page';
-
-    protected function onBeforeWrite()
-    {
-        parent::onBeforeWrite();
-    }
-
-    public function onBeforeDelete()
-    {
-        parent::onBeforeDelete();
-    }
-
-    public function validate()
-    {
-        $result = parent::validate();
-
-        return $result;
-    }
 
     public function getSettingsFields()
     {

@@ -5,11 +5,11 @@ namespace Goldfinch\Nest\Forms\GridField;
 use SilverStripe\View\SSViewer;
 use SilverStripe\View\ArrayData;
 use SilverStripe\Control\Controller;
-use SilverStripe\Forms\GridField\AbstractGridFieldComponent;
+use Goldfinch\Enchantment\Helpers\BuildHelper;
 use SilverStripe\Forms\GridField\GridField_ActionMenuLink;
 use SilverStripe\Forms\GridField\GridField_ColumnProvider;
 use SilverStripe\Forms\GridField\GridField_ActionMenuItem;
-use Goldfinch\Enchantment\Helpers\BuildHelper;
+use SilverStripe\Forms\GridField\AbstractGridFieldComponent;
 
 /**
  * A button that allows a user to view readonly details of a record. This is

@@ -9,7 +9,6 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use SilverStripe\AnyField\Form\AnyField;
 use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Control\Director;
 use SilverStripe\ORM\RelationList;
@@ -21,6 +20,7 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\Versioned;
+use SilverStripe\AnyField\Form\AnyField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 use SilverStripe\View\Parsers\URLSegmentFilter;
@@ -102,13 +102,6 @@ class NestedObject extends DataObject implements CMSPreviewable
         }
 
         return $result;
-    }
-
-    public function onBeforeDelete()
-    {
-        // ..
-
-        parent::onBeforeDelete();
     }
 
     public function getCMSFields()
@@ -224,26 +217,6 @@ class NestedObject extends DataObject implements CMSPreviewable
 
         return $fields;
     }
-
-    // public function canView($member = null)
-    // {
-    //     return true; // Permission::check('ADMIN', 'any', $member);
-    // }
-
-    // public function canEdit($member = null)
-    // {
-    //     return Permission::check('ADMIN', 'any', $member);
-    // }
-
-    // public function canDelete($member = null)
-    // {
-    //     return Permission::check('ADMIN', 'any', $member);
-    // }
-
-    // public function canCreate($member = null, $context = [])
-    // {
-    //     return Permission::check('ADMIN', 'any', $member);
-    // }
 
     protected function onBeforeWrite()
     {

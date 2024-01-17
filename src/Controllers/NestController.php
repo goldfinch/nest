@@ -66,13 +66,10 @@ class NestController extends ContentController
                 // 2)
                 if (count($params) === count($this->nested_tree))
                 {
-                    // dd($params, $this->URLSegment, $this->nested_tree);
-
                     $nest = last($this->nested_tree)::get()->filter('URLSegment', last($params))->first();
 
                     if ($nest && $nest->NestLink())
                     {
-                        // dd($nest->ClassName, $nest->isOnDraft());
                         $nested_tree = explode('/', ltrim($nest->NestLink(), '/'));
                         $current_tree = array_values($params);
                         array_unshift($current_tree, $this->URLSegment);
@@ -157,13 +154,6 @@ class NestController extends ContentController
         return $this->renderWith('Page', [
           'Layout' => $this->renderWith($this->ClassName)
         ]);
-    }
-
-    protected function init()
-    {
-        parent::init();
-
-        // ..
     }
 
     public function NestedList()
