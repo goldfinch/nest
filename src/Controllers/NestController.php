@@ -22,22 +22,20 @@ class NestController extends ContentController
     {
         $params = $request->latestParams();
 
-        if (count($params))
-        {
+        if (count($params)) {
             // 1)
-            if ($this->NestedObject)
-            {
+            if ($this->NestedObject) {
                 $start_nest = $this->NestedObject;
                 $this->nested_tree[] = $start_nest;
 
-                do
-                {
-                    $start_nest = isset($start_nest::$nest_up) ? $start_nest::$nest_up : null;
+                do {
+                    $start_nest = isset($start_nest::$nest_up)
+                        ? $start_nest::$nest_up
+                        : null;
                     if ($start_nest) {
-                      $this->nested_tree[] = $start_nest;
+                        $this->nested_tree[] = $start_nest;
                     }
-                }
-                while ($start_nest);
+                } while ($start_nest);
 
                 // $paramList = [
                 //   'params' => [],
@@ -51,12 +49,10 @@ class NestController extends ContentController
                 // }
 
                 // remove excess tree up objects
-                if (count($params) < count($this->nested_tree))
-                {
+                if (count($params) < count($this->nested_tree)) {
                     $nested_tree = [];
 
-                    for($i = 0; $i < count($params); $i++)
-                    {
+                    for ($i = 0; $i < count($params); $i++) {
                         $nested_tree[] = $this->nested_tree[$i];
                     }
 
@@ -64,25 +60,27 @@ class NestController extends ContentController
                 }
 
                 // 2)
-                if (count($params) === count($this->nested_tree))
-                {
-                    $nest = last($this->nested_tree)::get()->filter('URLSegment', last($params))->first();
+                if (count($params) === count($this->nested_tree)) {
+                    $nest = last($this->nested_tree)
+                        ::get()
+                        ->filter('URLSegment', last($params))
+                        ->first();
 
-                    if ($nest && $nest->NestLink())
-                    {
-                        $nested_tree = explode('/', ltrim($nest->NestLink(), '/'));
+                    if ($nest && $nest->NestLink()) {
+                        $nested_tree = explode(
+                            '/',
+                            ltrim($nest->NestLink(), '/'),
+                        );
                         $current_tree = array_values($params);
                         array_unshift($current_tree, $this->URLSegment);
 
                         $page = $this;
 
-                        while($page = $page->getParent())
-                        {
+                        while ($page = $page->getParent()) {
                             array_unshift($current_tree, $page->URLSegment);
                         }
 
-                        if ($nested_tree === $current_tree)
-                        {
+                        if ($nested_tree === $current_tree) {
                             $this->nestObject = $nest;
 
                             return $nest;
@@ -99,39 +97,32 @@ class NestController extends ContentController
     {
         $params = $request->latestParams();
 
-        if (count($params))
-        {
+        if (count($params)) {
             $nest = $this->getNestedObjectModel($request);
 
-            if ($nest)
-            {
-                if (SSViewer::chooseTemplate($nest->ClassName))
-                {
-                    if ($nest->MetaTitle)
-                    {
+            if ($nest) {
+                if (SSViewer::chooseTemplate($nest->ClassName)) {
+                    if ($nest->MetaTitle) {
                         $this->MetaTitle = $nest->MetaTitle;
-                    }
-                    else if ($nest->Title)
-                    {
+                    } elseif ($nest->Title) {
                         $this->MetaTitle = $nest->Title . ' - ' . $this->Title;
                     }
 
-                    if ($nest->MetaDescription)
-                    {
+                    if ($nest->MetaDescription) {
                         $this->MetaDescription = $nest->MetaDescription;
                     }
 
                     $nest = $this->nestExtend($nest);
 
                     return $this->customise([
-                      'IsObject' => true,
-                      'Layout' => $nest->renderWith($nest->ClassName)
+                        'IsObject' => true,
+                        'Layout' => $nest->renderWith($nest->ClassName),
                     ])->renderWith('Page');
-                }
-                else
-                {
+                } else {
                     return $this->customise([
-                      'Layout' => $nest->renderWith('Goldfinch\Nest\Models\NestedObject')
+                        'Layout' => $nest->renderWith(
+                            'Goldfinch\Nest\Models\NestedObject',
+                        ),
                     ])->renderWith('Page');
                 }
             }
@@ -139,27 +130,25 @@ class NestController extends ContentController
             return $this->httpError(404);
         }
 
-        if ($this->NestedPseudo)
-        {
-            if ($this->NestedRedirectPageID)
-            {
-                return $this->redirect($this->NestedRedirectPage()->Link(), 301);
-            }
-            else
-            {
+        if ($this->NestedPseudo) {
+            if ($this->NestedRedirectPageID) {
+                return $this->redirect(
+                    $this->NestedRedirectPage()->Link(),
+                    301,
+                );
+            } else {
                 return $this->httpError(404);
             }
         }
 
         return $this->renderWith('Page', [
-          'Layout' => $this->renderWith($this->ClassName)
+            'Layout' => $this->renderWith($this->ClassName),
         ]);
     }
 
     public function NestedList()
     {
-        if ($this->NestedObject)
-        {
+        if ($this->NestedObject) {
             return $this->NestedObject::get();
         }
 
@@ -174,7 +163,9 @@ class NestController extends ContentController
 
     public function CMSEditLink()
     {
-        return $this->nestObject ? $this->nestObject->CMSEditLink() : parent::CMSEditLink();
+        return $this->nestObject
+            ? $this->nestObject->CMSEditLink()
+            : parent::CMSEditLink();
         // return $this->getNestedObject()->CMSEditLink();
     }
 }

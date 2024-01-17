@@ -22,9 +22,7 @@ class Nest extends SiteTree
 
     private static $default_sort = "\"Sort\"";
 
-    private static $allowed_children = [
-        Nest::class,
-    ];
+    private static $allowed_children = [Nest::class];
 
     private static $db = [
         'NestedObject' => 'Varchar',
@@ -50,47 +48,53 @@ class Nest extends SiteTree
 
         $list[''] = '-';
 
-        foreach($classes as $key => $class)
-        {
-            if ($class::$nest_down && ($class::$nest_down == Nest::class || get_parent_class($class::$nest_down) == Nest::class))
-            {
+        foreach ($classes as $key => $class) {
+            if (
+                $class::$nest_down &&
+                ($class::$nest_down == Nest::class ||
+                    get_parent_class($class::$nest_down) == Nest::class)
+            ) {
                 $list[$class] = Str::of(class_basename($class))->headline();
             }
         }
 
-        $tabName = InstalledVersions::isInstalled('goldfinch/basement') ? 'Root.Advanced' : 'Root.Settings';
+        $tabName = InstalledVersions::isInstalled('goldfinch/basement')
+            ? 'Root.Advanced'
+            : 'Root.Settings';
 
-        $fields->addFieldsToTab(
-          $tabName,
-          [
-              DropdownField::create(
+        $fields->addFieldsToTab($tabName, [
+            DropdownField::create(
                 'NestedObject',
                 'Nested object',
                 $list,
                 $this->NestedObject,
-              ),
+            ),
 
-              CheckboxField::create('NestedPseudo', 'Nested Pseudo page')->setDescription('Makes this page pseudo, that is not accessable and returns 404. The sub nested objects will not be affected.'),
+            CheckboxField::create(
+                'NestedPseudo',
+                'Nested Pseudo page',
+            )->setDescription(
+                'Makes this page pseudo, that is not accessable and returns 404. The sub nested objects will not be affected.',
+            ),
 
-              Wrapper::create(
-
-                  TreeDropdownField::create(
+            Wrapper::create(
+                TreeDropdownField::create(
                     'NestedRedirectPageID',
                     'Redirect to',
                     SiteTree::class,
-                  ),
-
-              )->displayIf('NestedPseudo')->isChecked()->end(),
-          ]
-        );
+                ),
+            )
+                ->displayIf('NestedPseudo')
+                ->isChecked()
+                ->end(),
+        ]);
 
         return $fields;
     }
 
     public function getNestedList()
     {
-        if ($this->NestedObject)
-        {
+        if ($this->NestedObject) {
             return $this->NestedObject::get();
         }
 

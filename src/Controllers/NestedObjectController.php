@@ -30,18 +30,23 @@ class NestedObjectController extends Controller
         $defaultStyles = $this->config()->get('default_styles');
         $this->extend('updateForTemplateDefaultStyles', $defaultStyles);
 
-        if ($this->config()->get('include_default_styles') && !empty($defaultStyles)) {
+        if (
+            $this->config()->get('include_default_styles') &&
+            !empty($defaultStyles)
+        ) {
             foreach ($defaultStyles as $stylePath) {
                 Requirements::css($stylePath);
             }
         }
 
-        $template = 'Basement\\Elemental\\' . $this->element->config()->get('controller_template');
+        $template =
+            'Basement\\Elemental\\' .
+            $this->element->config()->get('controller_template');
         $this->extend('updateForTemplateTemplate', $template);
 
         return $this->renderWith([
             'type' => 'Layout',
-            $template
+            $template,
         ]);
     }
 
@@ -52,7 +57,7 @@ class NestedObjectController extends Controller
         if ($page && !($page instanceof NestedObjectController)) {
             return Controller::join_links(
                 $page->Link($action),
-                '#'. $this->element->getAnchor()
+                '#' . $this->element->getAnchor(),
             );
         }
 
@@ -61,7 +66,7 @@ class NestedObjectController extends Controller
         if ($curr && !($curr instanceof NestedObjectController)) {
             return Controller::join_links(
                 $curr->Link($action),
-                '#'. $this->element->getAnchor()
+                '#' . $this->element->getAnchor(),
             );
         }
     }

@@ -2,9 +2,7 @@
     "name": "goldfinch/nest",
     "description": "",
     "type": "silverstripe-vendormodule",
-    "keywords": [
-        "silverstripe"
-    ],
+    "keywords": ["silverstripe"],
     "license": "MIT",
     "authors": [
         {

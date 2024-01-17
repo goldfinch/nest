@@ -16,14 +16,16 @@ use SilverStripe\Forms\GridField\AbstractGridFieldComponent;
  * disabled by default and intended for use in readonly {@link GridField}
  * instances.
  */
-class GridFieldViewNestButton extends AbstractGridFieldComponent implements GridField_ColumnProvider, GridField_ActionMenuLink
+class GridFieldViewNestButton extends AbstractGridFieldComponent implements
+    GridField_ColumnProvider,
+    GridField_ActionMenuLink
 {
     /**
      * @inheritdoc
      */
     public function getTitle($gridField, $record, $columnName)
     {
-        return _t(__CLASS__ . '.VIEW', "View");
+        return _t(__CLASS__ . '.VIEW', 'View');
     }
 
     /**
@@ -41,13 +43,12 @@ class GridFieldViewNestButton extends AbstractGridFieldComponent implements Grid
     {
         $icon = 'font-icon-eye';
 
-        if(class_exists(BuildHelper::class))
-        {
+        if (class_exists(BuildHelper::class)) {
             $icon = 'bi bi-binoculars-fill';
         }
 
         return [
-            "classNames" => $icon,
+            'classNames' => $icon,
         ];
     }
 
@@ -56,7 +57,11 @@ class GridFieldViewNestButton extends AbstractGridFieldComponent implements Grid
      */
     public function getUrl($gridField, $record, $columnName)
     {
-        $link = Controller::join_links($gridField->Link('item'), $record->ID, 'view');
+        $link = Controller::join_links(
+            $gridField->Link('item'),
+            $record->ID,
+            'view',
+        );
         return $gridField->addAllStateToUrl($link);
     }
 
@@ -80,8 +85,7 @@ class GridFieldViewNestButton extends AbstractGridFieldComponent implements Grid
 
         $icon = 'font-icon-eye';
 
-        if(class_exists(BuildHelper::class))
-        {
+        if (class_exists(BuildHelper::class)) {
             $icon = 'bi bi-binoculars-fill';
         }
 
@@ -90,7 +94,11 @@ class GridFieldViewNestButton extends AbstractGridFieldComponent implements Grid
         // ]);
         // $template = SSViewer::get_templates_by_class($this, '', __CLASS__);
         // return $data->renderWith($template);
-        return '<a title="View on the website" target="_blank" class="grid-field__icon-action '.$icon.' action action-detail view-link action-menu--handled" href="javascript:window.open(\''.$record->Link().'\',\'_blank\')">
+        return '<a title="View on the website" target="_blank" class="grid-field__icon-action ' .
+            $icon .
+            ' action action-detail view-link action-menu--handled" href="javascript:window.open(\'' .
+            $record->Link() .
+            '\',\'_blank\')">
     <span class="sr-only">View</span>
 </a>
 ';

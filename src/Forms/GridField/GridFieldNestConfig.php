@@ -38,8 +38,8 @@ class GridFieldNestConfig extends GridFieldConfig
 
         $dataColumns->setDisplayFields([
             'Title' => 'Title',
-            'Link'=> 'URL',
-            'LastEdited' => 'Changed'
+            'Link' => 'URL',
+            'LastEdited' => 'Changed',
         ]);
 
         // $this->addComponent($dataColumns);

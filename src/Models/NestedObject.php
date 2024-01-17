@@ -37,9 +37,7 @@ class NestedObject extends DataObject implements CMSPreviewable
     public static $nest_down = null;
     public static $nest_down_parents = [];
 
-    private static $extensions = [
-        Versioned::class,
-    ];
+    private static $extensions = [Versioned::class];
 
     private static $singular_name = 'Nested object';
 
@@ -74,7 +72,7 @@ class NestedObject extends DataObject implements CMSPreviewable
 
     private static $searchable_fields = [
         'ID' => [
-            'field' => NumericField::class,  // ? check if needed
+            'field' => NumericField::class, // ? check if needed
         ],
         'Title',
     ];
@@ -96,8 +94,7 @@ class NestedObject extends DataObject implements CMSPreviewable
     {
         $result = parent::validate();
 
-        if (!$this->Title)
-        {
+        if (!$this->Title) {
             $result->addError('Title is required');
         }
 
@@ -110,60 +107,88 @@ class NestedObject extends DataObject implements CMSPreviewable
 
         $baseLink = Controller::join_links(
             Director::absoluteBaseURL(),
-            (self::config()->get('nested_urls') && $this->ParentID ? $this->Parent()->RelativeLink(true) : null)
+            self::config()->get('nested_urls') && $this->ParentID
+                ? $this->Parent()->RelativeLink(true)
+                : null,
         );
 
-        $urlsegment = SiteTreeURLSegmentField::create("URLSegment", $this->fieldLabel('URLSegment'))
+        $urlsegment = SiteTreeURLSegmentField::create(
+            'URLSegment',
+            $this->fieldLabel('URLSegment'),
+        )
             ->setURLPrefix($baseLink)
             ->setURLSuffix('?stage=Stage')
-            ->setDefaultURL($this->generateURLSegment(_t(
-                'SilverStripe\\CMS\\Controllers\\CMSMain.NEWPAGE',
-                'New {pagetype}',
-                ['pagetype' => $this->i18n_singular_name()]
-            )));
-        $helpText = (self::config()->get('nested_urls') && $this->numChildren())
-            ? $this->fieldLabel('LinkChangeNote')
-            : '';
+            ->setDefaultURL(
+                $this->generateURLSegment(
+                    _t(
+                        'SilverStripe\\CMS\\Controllers\\CMSMain.NEWPAGE',
+                        'New {pagetype}',
+                        ['pagetype' => $this->i18n_singular_name()],
+                    ),
+                ),
+            );
+        $helpText =
+            self::config()->get('nested_urls') && $this->numChildren()
+                ? $this->fieldLabel('LinkChangeNote')
+                : '';
         if (!URLSegmentFilter::create()->getAllowMultibyte()) {
-            $helpText .= _t('SilverStripe\\CMS\\Forms\\SiteTreeURLSegmentField.HelpChars', ' Special characters are automatically converted or removed.');
+            $helpText .= _t(
+                'SilverStripe\\CMS\\Forms\\SiteTreeURLSegmentField.HelpChars',
+                ' Special characters are automatically converted or removed.',
+            );
         }
         $urlsegment->setHelpText($helpText);
 
         $fields = new FieldList(
-            $rootTab = new TabSet(
-                "Root",
-                $tabMain = new Tab(
-                    'Main',
+            ($rootTab = new TabSet(
+                'Root',
+                ($tabMain = new Tab('Main')),
+                new TabSet(
+                    'Settings',
+                    new TabSet(
+                        'General',
+                        new Tab(
+                            'General_Inner',
+                            new TextField('Title', $this->fieldLabel('Title')),
+                            $urlsegment,
+                            new TextField(
+                                'MenuTitle',
+                                $this->fieldLabel('MenuTitle'),
+                            ),
+                        ),
+                    ),
+                    new TabSet(
+                        'SEO',
+                        new Tab(
+                            'SEO_Inner',
+                            TextField::create('MetaTitle', 'Meta title'),
+
+                            TextareaField::create(
+                                'MetaDescription',
+                                'Meta description',
+                            ),
+
+                            // $googleSitemapTab,
+
+                            CheckboxField::create(
+                                'ShowInSearch',
+                                'Show in search',
+                            ),
+
+                            CheckboxField::create(
+                                'ShowOnlyToRobots',
+                                'Show only to robots',
+                            ),
+
+                            // Wrapper::create(
+
+                            //   AnyField::create('ShowOnlyToRobots_BackLink', 'Back link for users'),
+
+                            // )->displayIf('ShowOnlyToRobots')->isChecked()->end(),
+                        ),
+                    ),
                 ),
-                new TabSet('Settings',
-                    new TabSet('General',
-                      new Tab('General_Inner',
-                        new TextField("Title", $this->fieldLabel('Title')),
-                        $urlsegment,
-                        new TextField("MenuTitle", $this->fieldLabel('MenuTitle')),
-                      ),
-                    ),
-                    new TabSet('SEO',
-                      new Tab('SEO_Inner',
-                        TextField::create('MetaTitle', 'Meta title'),
-
-                        TextareaField::create('MetaDescription', 'Meta description'),
-
-                        // $googleSitemapTab,
-
-                        CheckboxField::create('ShowInSearch', 'Show in search'),
-
-                        CheckboxField::create('ShowOnlyToRobots', 'Show only to robots'),
-
-                        // Wrapper::create(
-
-                        //   AnyField::create('ShowOnlyToRobots_BackLink', 'Back link for users'),
-
-                        // )->displayIf('ShowOnlyToRobots')->isChecked()->end(),
-                      )
-                    ),
-                )
-            )
+            )),
         );
 
         $tabMain->setTitle('Content');
@@ -171,26 +196,34 @@ class NestedObject extends DataObject implements CMSPreviewable
         if ($this->ObsoleteClassName) {
             $obsoleteWarning = _t(
                 'SilverStripe\\CMS\\Model\\SiteTree.OBSOLETECLASS',
-                "This page is of obsolete type {type}. Saving will reset its type and you may lose data",
-                ['type' => $this->ObsoleteClassName]
+                'This page is of obsolete type {type}. Saving will reset its type and you may lose data',
+                ['type' => $this->ObsoleteClassName],
             );
 
             $fields->addFieldToTab(
-                "Root.Main",
-                LiteralField::create("ObsoleteWarningHeader", "<p class=\"alert alert-warning\">$obsoleteWarning</p>"),
-                "Title"
+                'Root.Main',
+                LiteralField::create(
+                    'ObsoleteWarningHeader',
+                    "<p class=\"alert alert-warning\">$obsoleteWarning</p>",
+                ),
+                'Title',
             );
         }
 
         if (file_exists(PUBLIC_PATH . '/install.php')) {
-            $fields->addFieldToTab('Root.Main', LiteralField::create(
-                'InstallWarningHeader',
-                '<div class="alert alert-warning">' . _t(
-                    __CLASS__ . '.REMOVE_INSTALL_WARNING',
-                    "Warning: You should remove install.php from this SilverStripe install for security reasons."
-                )
-                . '</div>'
-            ), 'Title');
+            $fields->addFieldToTab(
+                'Root.Main',
+                LiteralField::create(
+                    'InstallWarningHeader',
+                    '<div class="alert alert-warning">' .
+                        _t(
+                            __CLASS__ . '.REMOVE_INSTALL_WARNING',
+                            'Warning: You should remove install.php from this SilverStripe install for security reasons.',
+                        ) .
+                        '</div>',
+                ),
+                'Title',
+            );
         }
 
         if (self::$runCMSFieldsExtensions) {
@@ -212,8 +245,14 @@ class NestedObject extends DataObject implements CMSPreviewable
         //   ]
         // );
 
-        $fields->addFieldToTab('Root.Settings', HistoryViewerField::create('NestedObjectHistory'));
-        $fields->addFieldToTab('Root.History', HistoryViewerField::create('NestedObjectHistory'));
+        $fields->addFieldToTab(
+            'Root.Settings',
+            HistoryViewerField::create('NestedObjectHistory'),
+        );
+        $fields->addFieldToTab(
+            'Root.History',
+            HistoryViewerField::create('NestedObjectHistory'),
+        );
 
         return $fields;
     }
@@ -228,7 +267,10 @@ class NestedObject extends DataObject implements CMSPreviewable
         // dd($this->validURLSegment());
         $count = 2;
         while (!$this->validURLSegment()) {
-            $this->URLSegment = preg_replace('/-[0-9]+$/', '', $this->URLSegment ?? '') . '-' . $count;
+            $this->URLSegment =
+                preg_replace('/-[0-9]+$/', '', $this->URLSegment ?? '') .
+                '-' .
+                $count;
             $count++;
         }
     }
@@ -240,11 +282,19 @@ class NestedObject extends DataObject implements CMSPreviewable
             // Guard against url segments for sub-pages
             $parent = $this->Parent();
             if ($controller = ModelAsController::controller_for($parent)) {
-                if ($controller instanceof Controller && $controller->hasAction($this->URLSegment)) {
+                if (
+                    $controller instanceof Controller &&
+                    $controller->hasAction($this->URLSegment)
+                ) {
                     return false;
                 }
             }
-        } elseif (in_array(strtolower($this->URLSegment ?? ''), $this->getExcludedURLSegments() ?? [])) {
+        } elseif (
+            in_array(
+                strtolower($this->URLSegment ?? ''),
+                $this->getExcludedURLSegments() ?? [],
+            )
+        ) {
             // Guard against url segments for the base page
             // Default to '-2', onBeforeWrite takes care of further possible clashes
             return false;
@@ -252,10 +302,10 @@ class NestedObject extends DataObject implements CMSPreviewable
 
         // If any of the extensions return `0` consider the segment invalid
         $extensionResponses = array_filter(
-            (array)$this->extend('augmentValidURLSegment'),
+            (array) $this->extend('augmentValidURLSegment'),
             function ($response) {
                 return !is_null($response);
-            }
+            },
         );
         if ($extensionResponses) {
             return min($extensionResponses);
@@ -263,8 +313,8 @@ class NestedObject extends DataObject implements CMSPreviewable
 
         // Check for clashing pages by url, id, and parent
         $source = NestedObject::get()->filter([
-          'ClassName' => $this->ClassName,
-          'URLSegment' => $this->URLSegment,
+            'ClassName' => $this->ClassName,
+            'URLSegment' => $this->URLSegment,
         ]);
 
         if ($this->ID) {
@@ -272,7 +322,10 @@ class NestedObject extends DataObject implements CMSPreviewable
         }
 
         if (self::config()->get('nested_urls')) {
-            $source = $source->filter('ParentID', $this->ParentID ? $this->ParentID : 0);
+            $source = $source->filter(
+                'ParentID',
+                $this->ParentID ? $this->ParentID : 0,
+            );
         }
 
         return !$source->exists();
@@ -296,7 +349,10 @@ class NestedObject extends DataObject implements CMSPreviewable
         }
 
         // Build from base folders
-        foreach (glob(Director::publicFolder() . '/*', GLOB_ONLYDIR) as $folder) {
+        foreach (
+            glob(Director::publicFolder() . '/*', GLOB_ONLYDIR)
+            as $folder
+        ) {
             $excludes[] = strtolower(basename($folder ?? ''));
         }
 
@@ -317,7 +373,11 @@ class NestedObject extends DataObject implements CMSPreviewable
         $filteredTitle = $filter->filter($title);
         // dd($filteredTitle);
         // Fallback to generic page name if path is empty (= no valid, convertable characters)
-        if (!$filteredTitle || $filteredTitle == '-' || $filteredTitle == '-1') {
+        if (
+            !$filteredTitle ||
+            $filteredTitle == '-' ||
+            $filteredTitle == '-1'
+        ) {
             $filteredTitle = "page-$this->ID";
         }
 
@@ -355,10 +415,16 @@ class NestedObject extends DataObject implements CMSPreviewable
             $parent = $this->Parent();
             // If page is removed select parent from version history (for archive page view)
             if ((!$parent || !$parent->exists()) && !$this->isOnDraft()) {
-                $parent = Versioned::get_latest_version(self::class, $this->ParentID);
+                $parent = Versioned::get_latest_version(
+                    self::class,
+                    $this->ParentID,
+                );
             }
             $base = $parent ? $parent->RelativeLink($this->URLSegment) : null;
-        } elseif (!$action && $this->URLSegment == RootURLController::get_homepage_link()) {
+        } elseif (
+            !$action &&
+            $this->URLSegment == RootURLController::get_homepage_link()
+        ) {
             // Unset base for root-level homepages.
             // Note: Homepages with action parameters (or $action === true)
             // need to retain their URLSegment.
@@ -412,31 +478,30 @@ class NestedObject extends DataObject implements CMSPreviewable
         // dump($this->ClassName,$this->isPublished());
         // $relativeLink = $this->RelativeLink($action);
         // $link =  Controller::join_links(Director::baseURL(), $relativeLink);
-        if ($this->URLSegment)
-        {
+        if ($this->URLSegment) {
             $nestedLink = rtrim($this->URLSegment . '/' . $nestedLink, '/');
         }
 
-        if (isset($this->ClassName::$nest_down))
-        {
+        if (isset($this->ClassName::$nest_down)) {
             $current = $this->ClassName::$nest_down;
 
-            if ($current && ($current == Nest::class || get_parent_class($current) == Nest::class))
-            {
-                $nestPage = $current::get()->filter('NestedObject', $this->ClassName)->first();
+            if (
+                $current &&
+                ($current == Nest::class ||
+                    get_parent_class($current) == Nest::class)
+            ) {
+                $nestPage = $current
+                    ::get()
+                    ->filter('NestedObject', $this->ClassName)
+                    ->first();
 
-                if ($nestPage && $nestPage->exists())
-                {
-                    if ($AbsoluteLink)
-                    {
+                if ($nestPage && $nestPage->exists()) {
+                    if ($AbsoluteLink) {
                         return $nestPage->AbsoluteLink() . '/' . $nestedLink;
-                    }
-                    else
-                    {
+                    } else {
                         $link = '/' . $nestPage->URLSegment . '/';
 
-                        while($nestPage = $nestPage->getParent())
-                        {
+                        while ($nestPage = $nestPage->getParent()) {
                             $link = '/' . $nestPage->URLSegment . $link;
                         }
 
@@ -449,25 +514,19 @@ class NestedObject extends DataObject implements CMSPreviewable
 
             $parent = $this->$current();
 
-            if (is_subclass_of($parent, RelationList::class))
-            {
+            if (is_subclass_of($parent, RelationList::class)) {
                 // TODO: multiple conacoil
                 // $parent->first()->map('ID', 'URLSegment')->toArray();
                 // $parent->map('ID', 'URLSegment')->toArray();
                 $obj = $parent->first();
 
-                if ($obj && $obj->exists())
-                {
+                if ($obj && $obj->exists()) {
                     return $obj->NestLink($AbsoluteLink, $nestedLink);
                 }
-            }
-            else
-            {
+            } else {
                 // single, belongs to ..
             }
-        }
-        else
-        {
+        } else {
             return '#broken-link'; // $this->URLSegment . '/' . $nestedLink;
         }
 
@@ -481,7 +540,8 @@ class NestedObject extends DataObject implements CMSPreviewable
 
     public function isDownNested()
     {
-        return isset($this->ClassName::$nest_down) && $this->ClassName::$nest_down;
+        return isset($this->ClassName::$nest_down) &&
+            $this->ClassName::$nest_down;
     }
 
     public function upNestedClass()
@@ -496,15 +556,14 @@ class NestedObject extends DataObject implements CMSPreviewable
 
     public function getNestedParent()
     {
-        if ($this->isDownNested())
-        {
+        if ($this->isDownNested()) {
             // only Nest page as parent
-            if (Nest::class === $this->downNestedClass())
-            {
-                return $this->downNestedClass()::get()->filter('NestedObject', $this->ClassName)->first();
-            }
-            else
-            {
+            if (Nest::class === $this->downNestedClass()) {
+                return $this->downNestedClass()
+                    ::get()
+                    ->filter('NestedObject', $this->ClassName)
+                    ->first();
+            } else {
                 // TODO? DataObject ...
             }
         }
@@ -516,14 +575,17 @@ class NestedObject extends DataObject implements CMSPreviewable
     {
         $html = DBHTMLText::create();
 
-        if ($this->isDownNested())
-        {
+        if ($this->isDownNested()) {
             $link = $this->Link();
 
-            $html->setValue('<a onclick="event.stopPropagation();" target="_blank" href="' . $link . '">' . $this->URLSegment . '</a>');
-        }
-        else
-        {
+            $html->setValue(
+                '<a onclick="event.stopPropagation();" target="_blank" href="' .
+                    $link .
+                    '">' .
+                    $this->URLSegment .
+                    '</a>',
+            );
+        } else {
             $html->setValue('-');
         }
 
