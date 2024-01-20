@@ -26,7 +26,7 @@ use UncleCheese\DisplayLogic\Forms\Wrapper;
 use SilverStripe\View\Parsers\URLSegmentFilter;
 use SilverStripe\CMS\Controllers\ModelAsController;
 use SilverStripe\CMS\Controllers\RootURLController;
-use SilverStripe\CMS\Forms\SiteTreeURLSegmentField;
+use Goldfinch\Nest\Forms\NestedObjectURLSegmentField;
 use Goldfinch\Nest\Controllers\NestedObjectController;
 use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
 
@@ -107,15 +107,23 @@ class NestedObject extends DataObject implements CMSPreviewable
 
         $baseLink = Controller::join_links(
             Director::absoluteBaseURL(),
-            self::config()->get('nested_urls') && $this->ParentID
+            // self::config()->get('nested_urls') && $this->ParentID
+            $this->Parent()
                 ? $this->Parent()->RelativeLink(true)
                 : null,
         );
 
-        $urlsegment = SiteTreeURLSegmentField::create(
+        $nestedPage = $this->downNestedClass();
+        $nestedPage = $nestedPage ? last(explode('\\', $nestedPage)) : 'undefined';
+        $nestedObject = get_class($this);
+        $nestedObject = $nestedObject ? last(explode('\\', $nestedObject)) : 'undefined';
+
+        $urlsegment = NestedObjectURLSegmentField::create(
             'URLSegment',
             $this->fieldLabel('URLSegment'),
         )
+            ->setDescription($this->Parent() ? '' : 'You need to create <span style="color: red; font-style: italic">'.$nestedPage.'</span> page and assign <span style="color: red; font-style: italic">'.$nestedObject.'</span> as a nested object in page settings')
+            ->setNestedObject($this)
             ->setURLPrefix($baseLink)
             ->setURLSuffix('?stage=Stage')
             ->setDefaultURL(
@@ -132,10 +140,7 @@ class NestedObject extends DataObject implements CMSPreviewable
                 ? $this->fieldLabel('LinkChangeNote')
                 : '';
         if (!URLSegmentFilter::create()->getAllowMultibyte()) {
-            $helpText .= _t(
-                'SilverStripe\\CMS\\Forms\\SiteTreeURLSegmentField.HelpChars',
-                ' Special characters are automatically converted or removed.',
-            );
+            $helpText .= ' Special characters are automatically converted or removed.';
         }
         $urlsegment->setHelpText($helpText);
 
@@ -266,7 +271,9 @@ class NestedObject extends DataObject implements CMSPreviewable
     {
         parent::onBeforeWrite();
 
-        $this->URLSegment = $this->generateURLSegment($this->Title);
+        if (!$this->URLSegment) {
+            $this->URLSegment = $this->generateURLSegment($this->Title);
+        }
 
         // Ensure that this object has a non-conflicting URLSegment value.
         // dd($this->validURLSegment());
@@ -383,7 +390,7 @@ class NestedObject extends DataObject implements CMSPreviewable
             $filteredTitle == '-' ||
             $filteredTitle == '-1'
         ) {
-            $filteredTitle = "page-$this->ID";
+            $filteredTitle = "page-" . $this->ID;
         }
 
         // Hook for extensions
@@ -411,7 +418,7 @@ class NestedObject extends DataObject implements CMSPreviewable
 
     public function Parent()
     {
-        //
+        return $this->getNestedParent();
     }
 
     public function RelativeLink($action = null)
@@ -563,7 +570,7 @@ class NestedObject extends DataObject implements CMSPreviewable
     {
         if ($this->isDownNested()) {
             // only Nest page as parent
-            if (Nest::class === $this->downNestedClass()) {
+            if (Nest::class === $this->downNestedClass() || Nest::class === get_parent_class($this->downNestedClass())) {
                 return $this->downNestedClass()
                     ::get()
                     ->filter('NestedObject', $this->ClassName)
