@@ -249,10 +249,15 @@ class NestedObject extends DataObject implements CMSPreviewable
             'Root.Settings',
             HistoryViewerField::create('NestedObjectHistory'),
         );
-        $fields->addFieldToTab(
-            'Root.History',
-            HistoryViewerField::create('NestedObjectHistory'),
-        );
+
+        // $fields->addFieldToTab(
+        //     'Root.History',
+        //     HistoryViewerField::create('NestedObjectHistory'),
+        // );
+
+        $fields->removeByName([
+            'NestedObjectHistory',
+        ]);
 
         return $fields;
     }
