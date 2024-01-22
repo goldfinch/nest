@@ -16,7 +16,7 @@ class NestObjectTemplateMakeCommand extends GeneratorCommand
 
     protected $type = 'nest page template';
 
-    protected $stub = 'nest-object-template.stub';
+    protected $stub = './stubs/nest-object-template.stub';
 
     protected $prefix = '';
 
