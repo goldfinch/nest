@@ -2,6 +2,7 @@
 
 namespace Goldfinch\Nest\Controllers;
 
+use Goldfinch\Nest\Pages\Nest;
 use SilverStripe\View\SSViewer;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\CMS\Controllers\ContentController;
@@ -101,24 +102,26 @@ class NestController extends ContentController
             $nest = $this->getNestedObjectModel($request);
 
             if ($nest) {
+                if ($nest->MetaTitle) {
+                    $this->MetaTitle = $nest->MetaTitle;
+                } elseif ($nest->Title) {
+                    $this->MetaTitle = $nest->Title . ' - ' . $this->Title;
+                }
+
+                if ($nest->MetaDescription) {
+                    $this->MetaDescription = $nest->MetaDescription;
+                }
+
+                $nest = $this->nestExtend($nest);
+
                 if (SSViewer::chooseTemplate($nest->ClassName)) {
-                    if ($nest->MetaTitle) {
-                        $this->MetaTitle = $nest->MetaTitle;
-                    } elseif ($nest->Title) {
-                        $this->MetaTitle = $nest->Title . ' - ' . $this->Title;
-                    }
-
-                    if ($nest->MetaDescription) {
-                        $this->MetaDescription = $nest->MetaDescription;
-                    }
-
-                    $nest = $this->nestExtend($nest);
 
                     return $this->customise([
                         'IsObject' => true,
                         'Layout' => $nest->renderWith($nest->ClassName),
                     ])->renderWith('Page');
                 } else {
+
                     return $this->customise([
                         'Layout' => $nest->renderWith(
                             'Goldfinch\Nest\Models\NestedObject',
@@ -137,7 +140,14 @@ class NestController extends ContentController
                     301,
                 );
             } else {
-                return $this->httpError(404);
+                if (is_subclass_of($this->Parent(), Nest::class)) {
+                    return $this->redirect(
+                        $this->Parent()->Link(),
+                        301,
+                    );
+                } else {
+                    return $this->httpError(404);
+                }
             }
         }
 
