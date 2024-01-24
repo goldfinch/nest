@@ -269,7 +269,27 @@ class NestedObject extends DataObject implements CMSPreviewable
 
     protected function onBeforeWrite()
     {
-        parent::onBeforeWrite();
+        $nestClass = $this->ClassName;
+
+        // reorder -- start
+        $all = $nestClass::get();
+
+        if ($all->count() > 1 && !$this->SortOrder) {
+            $count = 1;
+            $this->SortOrder = $count;
+
+            foreach ($all as $item) {
+                if ($item->ID === $this->ID) {
+                    continue;
+                }
+
+                $count++;
+                $item->SortOrder = $count;
+                $item->write();
+                $item->publishRecursive();
+            }
+        }
+        // reorder -- end
 
         if (!$this->URLSegment) {
             $this->URLSegment = $this->generateURLSegment($this->Title);
@@ -285,6 +305,8 @@ class NestedObject extends DataObject implements CMSPreviewable
                 $count;
             $count++;
         }
+
+        parent::onBeforeWrite();
     }
 
     public function validURLSegment()
@@ -571,10 +593,21 @@ class NestedObject extends DataObject implements CMSPreviewable
         if ($this->isDownNested()) {
             // only Nest page as parent
             if (Nest::class === $this->downNestedClass() || Nest::class === get_parent_class($this->downNestedClass())) {
-                return $this->downNestedClass()
+
+                $page = $this->downNestedClass()
                     ::get()
                     ->filter('NestedObject', $this->ClassName)
                     ->first();
+
+                if ($page && $page->NestedPseudo) {
+                    if ($page->NestedRedirectPageID) {
+                        return $page->NestedRedirectPage();
+                    } else if ($page->ParentID) {
+                        return $page->Parent();
+                    }
+                }
+
+                return $page;
             } else {
                 // TODO? DataObject ...
             }
@@ -602,6 +635,44 @@ class NestedObject extends DataObject implements CMSPreviewable
         }
 
         return $html;
+    }
+
+    public function getPreviousItem()
+    {
+        $nestClass = $this->ClassName;
+
+        // check if sort applied already, otherwise rely on ID as a fallback
+        if ($this->SortOrder) {
+            $filter = ['SortOrder:LessThan' => $this->SortOrder];
+        } else {
+
+            if ($nestClass::get()->filter('SortOrder:GreaterThan', 0)->count()) {
+                $filter = ['ID:LessThan' => $this->ID];
+            } else {
+                $filter = ['ID:GreaterThan' => $this->ID];
+            }
+        }
+
+        return $nestClass::get()->filter($filter)->sort('SortOrder DESC')->first();
+    }
+
+    public function getNextItem()
+    {
+        $nestClass = $this->ClassName;
+
+        // check if sort applied already, otherwise rely on ID as a fallback
+        if ($this->SortOrder) {
+            $filter = ['SortOrder:GreaterThan' => $this->SortOrder];
+        } else {
+
+            if ($nestClass::get()->filter('SortOrder:GreaterThan', 0)->count()) {
+                $filter = ['ID:GreaterThan' => $this->ID];
+            } else {
+                $filter = ['ID:LessThan' => $this->ID];
+            }
+        }
+
+        return $nestClass::get()->filter($filter)->first();
     }
 
     // public function NestedChildren()
