@@ -61,13 +61,15 @@ class NestedObjectController extends Controller
             );
         }
 
-        $curr = Controller::curr();
+        if (Controller::has_curr()) {
+            $curr = Controller::curr();
 
-        if ($curr && !($curr instanceof NestedObjectController)) {
-            return Controller::join_links(
-                $curr->Link($action),
-                '#' . $this->element->getAnchor(),
-            );
+            if ($curr && !($curr instanceof NestedObjectController)) {
+                return Controller::join_links(
+                    $curr->Link($action),
+                    '#' . $this->element->getAnchor(),
+                );
+            }
         }
     }
 }
