@@ -4,6 +4,7 @@ namespace Goldfinch\Nest\Controllers;
 
 use Goldfinch\Nest\Pages\Nest;
 use SilverStripe\View\SSViewer;
+use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\CMS\Controllers\ContentController;
 
@@ -159,7 +160,9 @@ class NestController extends ContentController
     public function NestedList()
     {
         if ($this->NestedObject) {
-            return $this->NestedObject::get();
+            $list = $this->NestedObject::get();
+            return PaginatedList::create($list, $this->getRequest());
+            // return $list;
         }
 
         return null;
