@@ -161,7 +161,9 @@ class NestController extends ContentController
     {
         if ($this->NestedObject) {
             $list = $this->NestedObject::get();
-            return PaginatedList::create($list, $this->getRequest());
+            $list = $this->NestedObject::listExtraFilter($list, $this->getRequest());
+            $cfg = $this->NestedObject::config();
+            return PaginatedList::create($list, $this->getRequest())->setPageLength($cfg->get('nestedListPageLength') ?? 10);
             // return $list;
         }
 

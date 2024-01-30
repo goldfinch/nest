@@ -5,6 +5,7 @@ namespace Goldfinch\Nest\Models;
 use SilverStripe\Forms\Tab;
 use Goldfinch\Nest\Pages\Nest;
 use SilverStripe\Forms\TabSet;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\FieldList;
@@ -16,6 +17,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\ORM\CMSPreviewable;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Security\Permission;
@@ -36,6 +38,8 @@ class NestedObject extends DataObject implements CMSPreviewable
     public static $nest_up_children = [];
     public static $nest_down = null;
     public static $nest_down_parents = [];
+
+    private static $nestedListPageLength = 10;
 
     private static $extensions = [Versioned::class];
 
@@ -269,24 +273,26 @@ class NestedObject extends DataObject implements CMSPreviewable
 
     protected function onBeforeWrite()
     {
-        $nestClass = $this->ClassName;
+        // reorder -- start (helps to adjust sorting)
+        if ($this->dbObject('SortOrder')) {
+            $nestClass = $this->ClassName;
 
-        // reorder -- start
-        $all = $nestClass::get();
+            $all = $nestClass::get();
 
-        if ($all->count() > 1 && !$this->SortOrder) {
-            $count = 1;
-            $this->SortOrder = $count;
+            if ($all->count() > 1 && !$this->SortOrder) {
+                $count = 1;
+                $this->SortOrder = $count;
 
-            foreach ($all as $item) {
-                if ($item->ID === $this->ID) {
-                    continue;
+                foreach ($all as $item) {
+                    if ($item->ID === $this->ID) {
+                        continue;
+                    }
+
+                    $count++;
+                    $item->SortOrder = $count;
+                    $item->write();
+                    $item->publishRecursive();
                 }
-
-                $count++;
-                $item->SortOrder = $count;
-                $item->write();
-                $item->publishRecursive();
             }
         }
         // reorder -- end
@@ -673,6 +679,51 @@ class NestedObject extends DataObject implements CMSPreviewable
         }
 
         return $nestClass::get()->filter($filter)->first();
+    }
+
+    /**
+     * To support additional filtering (eg. when using search) - Paginated list
+     */
+    public static function listExtraFilter(DataList $list, HTTPRequest $request): DataList
+    {
+        if ($request->getVar('search')) {
+
+            $strSearch = self::prepareSearchStr($request->getVar('search'));
+
+            $list = $list->filterAny([
+                'Title:PartialMatch' => $strSearch,
+                'Content:PartialMatch' => $strSearch,
+            ]);
+        }
+
+        return $list;
+    }
+
+
+    /**
+     * To support additional filtering (eg. when using search) - Loadable listing
+     */
+    public static function loadable(DataList $list, HTTPRequest $request, $data, $config): DataList
+    {
+        if ($data && !empty($data))
+        {
+            if (isset($data['urlparams']['search']) && $data['urlparams']['search']) {
+
+                $strSearch = self::prepareSearchStr($data['urlparams']['search']);
+
+                $list = $list->filterAny([
+                    'Title:PartialMatch' => $strSearch,
+                    'Content:PartialMatch' =>  $strSearch,
+                ]);
+            }
+        }
+
+        return $list;
+    }
+
+    private static function prepareSearchStr($str)
+    {
+        return preg_replace('/[^A-Za-z0-9-_.,\s]/','', $str);
     }
 
     // public function NestedChildren()
