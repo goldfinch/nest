@@ -94,11 +94,17 @@ class NestedObject extends DataObject implements CMSPreviewable
 
     private static $runCMSFieldsExtensions = true;
 
+    private static $requiredTitle = true;
+
+    private static $searchableListFields = [
+        'Title',
+    ];
+
     public function validate()
     {
         $result = parent::validate();
 
-        if (!$this->Title) {
+        if ($this->config()->get('requiredTitle') && !$this->Title) {
             $result->addError('Title is required');
         }
 
@@ -647,31 +653,35 @@ class NestedObject extends DataObject implements CMSPreviewable
     {
         $nestClass = $this->ClassName;
 
+        $sortField = current(explode(' ', $this->config()->get('default_sort')));
+
         // check if sort applied already, otherwise rely on ID as a fallback
-        if ($this->SortOrder) {
-            $filter = ['SortOrder:LessThan' => $this->SortOrder];
+        if ($this->$sortField) {
+            $filter = [$sortField . ':LessThan' => $this->$sortField];
         } else {
 
-            if ($nestClass::get()->filter('SortOrder:GreaterThan', 0)->count()) {
+            if ($nestClass::get()->filter($sortField . ':GreaterThan', 0)->count()) {
                 $filter = ['ID:LessThan' => $this->ID];
             } else {
                 $filter = ['ID:GreaterThan' => $this->ID];
             }
         }
 
-        return $nestClass::get()->filter($filter)->sort('SortOrder DESC')->first();
+        return $nestClass::get()->filter($filter)->sort($sortField . ' DESC')->first();
     }
 
     public function getNextItem()
     {
         $nestClass = $this->ClassName;
 
+        $sortField = current(explode(' ', $this->config()->get('default_sort')));
+
         // check if sort applied already, otherwise rely on ID as a fallback
-        if ($this->SortOrder) {
-            $filter = ['SortOrder:GreaterThan' => $this->SortOrder];
+        if ($this->$sortField) {
+            $filter = [$sortField . ':GreaterThan' => $this->$sortField];
         } else {
 
-            if ($nestClass::get()->filter('SortOrder:GreaterThan', 0)->count()) {
+            if ($nestClass::get()->filter($sortField . ':GreaterThan', 0)->count()) {
                 $filter = ['ID:GreaterThan' => $this->ID];
             } else {
                 $filter = ['ID:LessThan' => $this->ID];
@@ -686,14 +696,11 @@ class NestedObject extends DataObject implements CMSPreviewable
      */
     public static function listExtraFilter(DataList $list, HTTPRequest $request): DataList
     {
-        if ($request->getVar('search')) {
+        if ($request->getVar('search') && strlen($request->getVar('search')) > 2) {
 
             $strSearch = self::prepareSearchStr($request->getVar('search'));
 
-            $list = $list->filterAny([
-                'Title:PartialMatch' => $strSearch,
-                'Content:PartialMatch' => $strSearch,
-            ]);
+            $list = $list->filterAny(self::getSearchableListFields($strSearch));
         }
 
         return $list;
@@ -707,15 +714,23 @@ class NestedObject extends DataObject implements CMSPreviewable
     {
         if ($data && !empty($data))
         {
-            if (isset($data['urlparams']['search']) && $data['urlparams']['search']) {
+            if (isset($data['urlparams']['search']) && $data['urlparams']['search'] && strlen($data['urlparams']['search']) > 2) {
 
                 $strSearch = self::prepareSearchStr($data['urlparams']['search']);
 
-                $list = $list->filterAny([
-                    'Title:PartialMatch' => $strSearch,
-                    'Content:PartialMatch' =>  $strSearch,
-                ]);
+                $list = $list->filterAny(self::getSearchableListFields($strSearch));
             }
+        }
+
+        return $list;
+    }
+
+    public static function getSearchableListFields($strSearch)
+    {
+        $list = [];
+
+        foreach (self::config()->get('searchableListFields') as $field) {
+            $list[$field . ':PartialMatch'] = $strSearch;
         }
 
         return $list;
