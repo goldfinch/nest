@@ -9,3 +9,5 @@ object
 parent
 <% end_if %>
 ```
+
+public function GridItemSummaryList()

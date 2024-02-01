@@ -9,6 +9,9 @@ class {{ class }} extends NestedObject
     public static $nest_up_children = [];
     public static $nest_down = Nest::class; // or custom one
     public static $nest_down_parents = [];
+    // private static $required_title = true;
+    // private static $settings_tab = true;
+    // private static $searchable_list_fields = [];
 
     private static $table_name = '{{ class }}';
     private static $singular_name = '{{ class_singular }}';

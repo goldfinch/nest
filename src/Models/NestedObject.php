@@ -88,23 +88,60 @@ class NestedObject extends DataObject implements CMSPreviewable
     ];
 
     private static $summary_fields = [
-        'Title' => 'Title',
-        'HTMLLink' => 'Preview',
+        'GridItemSummary' => 'Summary',
     ];
 
     private static $runCMSFieldsExtensions = true;
 
-    private static $requiredTitle = true;
+    private static $required_title = true;
 
-    private static $searchableListFields = [
+    private static $settings_tab = true;
+
+    private static $searchable_list_fields = [
         'Title',
     ];
+
+    public function GridItemSummary()
+    {
+        $html = DBHTMLText::create();
+
+        $str = '';
+
+        $str .= '<div>';
+        foreach ($this->GridItemSummaryList() as $label => $value) {
+            if ($label == 'Image') {
+                $str = '<div style="width: 100px; float: left; margin-right: 20px; border-radius: 10px; overflow: hidden">' . $value . '</div>' . $str;
+                continue;
+            }
+
+            if ($label[0] == '-') {
+                $label = '';
+            } else {
+                $label = '<span style="color: #666; font-weight: 600">'.$label.':</span> ';
+            }
+
+            $str .= '<div style="margin-bottom: 10px">'.$label.'<span>'.$value.'</span></div>';
+        }
+        $str .= '</div>';
+
+        return $html->setValue($str);
+    }
+
+    public function GridItemSummaryList()
+    {
+        $list = [
+            '-Title' => '<span style="display: block; font-size: 14px; font-weight: 600">' . $this->Title . '</span>',
+            '-HTMLLink' => $this->HTMLLink(),
+        ];
+
+        return $list;
+    }
 
     public function validate()
     {
         $result = parent::validate();
 
-        if ($this->config()->get('requiredTitle') && !$this->Title) {
+        if ($this->config()->get('required_title') && !$this->Title) {
             $result->addError('Title is required');
         }
 
@@ -154,8 +191,8 @@ class NestedObject extends DataObject implements CMSPreviewable
         }
         $urlsegment->setHelpText($helpText);
 
-        $fields = new FieldList(
-            ($rootTab = new TabSet(
+        if ($this->config()->get('settings_tab')) {
+            $fieldList = ($rootTab = new TabSet(
                 'Root',
                 ($tabMain = new Tab('Main')),
                 new TabSet(
@@ -203,8 +240,15 @@ class NestedObject extends DataObject implements CMSPreviewable
                         ),
                     ),
                 ),
-            )),
-        );
+            ));
+        } else {
+            $fieldList = ($rootTab = new TabSet(
+                'Root',
+                ($tabMain = new Tab('Main')),
+            ));
+        }
+
+        $fields = new FieldList($fieldList);
 
         $tabMain->setTitle('Content');
 
@@ -260,10 +304,12 @@ class NestedObject extends DataObject implements CMSPreviewable
         //   ]
         // );
 
-        $fields->addFieldToTab(
-            'Root.Settings',
-            HistoryViewerField::create('NestedObjectHistory'),
-        );
+        if ($this->config()->get('settings_tab')) {
+            $fields->addFieldToTab(
+                'Root.Settings',
+                HistoryViewerField::create('NestedObjectHistory'),
+            );
+        }
 
         // $fields->addFieldToTab(
         //     'Root.History',
@@ -729,7 +775,7 @@ class NestedObject extends DataObject implements CMSPreviewable
     {
         $list = [];
 
-        foreach (self::config()->get('searchableListFields') as $field) {
+        foreach (self::config()->get('searchable_list_fields') as $field) {
             $list[$field . ':PartialMatch'] = $strSearch;
         }
 
