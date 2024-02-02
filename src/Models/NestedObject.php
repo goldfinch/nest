@@ -134,6 +134,8 @@ class NestedObject extends DataObject implements CMSPreviewable
             '-HTMLLink' => $this->HTMLLink(),
         ];
 
+        $this->extend('updateGridItemSummaryList', $list);
+
         return $list;
     }
 

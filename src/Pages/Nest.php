@@ -8,6 +8,7 @@ use Composer\InstalledVersions;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\ORM\PaginatedList;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Controller;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use Goldfinch\Nest\Models\NestedObject;
@@ -94,12 +95,16 @@ class Nest extends SiteTree
     }
 
     // this might might be useless since it also exists in controller
+    // ! called in templates
     public function getNestedList()
     {
-        if ($this->NestedObject) {
-            $list = $this->NestedObject::get();
-            return PaginatedList::create($list, $this->getRequest());
-            // return $list;
+        if (Controller::has_curr()) {
+            $ctrl = Controller::curr();
+            if ($this->NestedObject) {
+                $list = $this->NestedObject::get();
+                return PaginatedList::create($list, $ctrl->getRequest());
+                // return $list;
+            }
         }
 
         return null;
