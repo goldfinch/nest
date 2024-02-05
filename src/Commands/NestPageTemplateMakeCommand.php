@@ -12,7 +12,7 @@ class NestPageTemplateMakeCommand extends GeneratorCommand
 
     protected $description = 'Create a new nest-page template';
 
-    protected $path = 'themes/main/templates/App/Pages/Nest';
+    protected $path = 'themes/[theme]/templates/[namespace_root]';
 
     protected $type = 'nest page template';
 

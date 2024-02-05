@@ -12,7 +12,7 @@ class NestObjectTemplateMakeCommand extends GeneratorCommand
 
     protected $description = 'Create a new nest-object template';
 
-    protected $path = 'themes/main/templates/App/Models/Nest';
+    protected $path = 'themes/[theme]/templates/[namespace_root]';
 
     protected $type = 'nest page template';
 
