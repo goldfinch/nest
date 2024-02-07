@@ -17,5 +17,5 @@ class MakeNestPageControllerCommand extends GeneratorCommand
 
     protected $stub = './stubs/nest-page-controller.stub';
 
-    protected $prefix = 'Controller';
+    protected $suffix = 'Controller';
 }
