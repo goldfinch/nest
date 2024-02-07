@@ -19,24 +19,17 @@ class NestObjectMakeCommand extends GeneratorCommand
 
     protected $stub = './stubs/nest-object.stub';
 
-    protected $prefix = '';
-
     protected function execute($input, $output): int
     {
-        parent::execute($input, $output);
+        if (parent::execute($input, $output) === false) {
+            return Command::FAILURE;
+        }
 
         $nameInput = $this->getAttrName($input);
 
-        // Create nest-object template
-
+        // create nest-object template
         $command = $this->getApplication()->find('make:nest-object-template');
-
-        $arguments = [
-            'name' => $nameInput,
-        ];
-
-        $greetInput = new ArrayInput($arguments);
-        $returnCode = $command->run($greetInput, $output);
+        $command->run(new ArrayInput(['name' => $nameInput]), $output);
 
         return Command::SUCCESS;
     }

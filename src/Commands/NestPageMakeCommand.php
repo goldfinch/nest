@@ -19,35 +19,21 @@ class NestPageMakeCommand extends GeneratorCommand
 
     protected $stub = './stubs/nest-page.stub';
 
-    protected $prefix = '';
-
     protected function execute($input, $output): int
     {
-        parent::execute($input, $output);
+        if (parent::execute($input, $output) === false) {
+            return Command::FAILURE;
+        }
 
         $nameInput = $this->getAttrName($input);
 
-        // Create page controller
-
+        // create page controller
         $command = $this->getApplication()->find('make:nest-page-controller');
+        $command->run(new ArrayInput(['name' => $nameInput]), $output);
 
-        $arguments = [
-            'name' => $nameInput,
-        ];
-
-        $greetInput = new ArrayInput($arguments);
-        $returnCode = $command->run($greetInput, $output);
-
-        // Create page template
-
+        // create page template
         $command = $this->getApplication()->find('make:nest-page-template');
-
-        $arguments = [
-            'name' => $nameInput,
-        ];
-
-        $greetInput = new ArrayInput($arguments);
-        $returnCode = $command->run($greetInput, $output);
+        $command->run(new ArrayInput(['name' => $nameInput]), $output);
 
         return Command::SUCCESS;
     }

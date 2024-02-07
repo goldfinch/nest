@@ -3,7 +3,6 @@
 namespace Goldfinch\Nest\Commands;
 
 use Goldfinch\Taz\Console\GeneratorCommand;
-use Symfony\Component\Console\Command\Command;
 
 #[AsCommand(name: 'make:nest-page-controller')]
 class MakeNestPageControllerCommand extends GeneratorCommand
@@ -19,11 +18,4 @@ class MakeNestPageControllerCommand extends GeneratorCommand
     protected $stub = './stubs/nest-page-controller.stub';
 
     protected $prefix = 'Controller';
-
-    protected function execute($input, $output): int
-    {
-        parent::execute($input, $output);
-
-        return Command::SUCCESS;
-    }
 }
