@@ -5,6 +5,7 @@ namespace Goldfinch\Nest\Commands;
 use Goldfinch\Taz\Console\GeneratorCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputOption;
 
 #[AsCommand(name: 'make:nest-object')]
 class NestObjectMakeCommand extends GeneratorCommand
@@ -19,8 +20,33 @@ class NestObjectMakeCommand extends GeneratorCommand
 
     protected $stub = './stubs/nest-object.stub';
 
+    protected function configure(): void
+    {
+        parent::configure();
+
+        $this->addOption(
+            'plain',
+            null,
+            InputOption::VALUE_NONE,
+            'Plane model template'
+        );
+
+        $this->addOption(
+            'fielder',
+            null,
+            InputOption::VALUE_NONE,
+            'Fielder model template'
+        );
+    }
+
     protected function execute($input, $output): int
     {
+        if ($input->getOption('fielder') !== false) {
+            $this->stub = 'nest-object-fielder.stub';
+        } else if ($input->getOption('plain') !== false) {
+            $this->stub = 'nest-object-plain.stub';
+        }
+
         if (parent::execute($input, $output) === false) {
             return Command::FAILURE;
         }
