@@ -8,7 +8,7 @@ SilverStripe\Versioned\VersionedGridFieldItemRequest:
 Goldfinch\Nest\Models\NestedObject:
   extensions:
     - SilverStripe\Admin\CMSEditLinkExtension
-
+    - Goldfinch\Helpers\Extensions\SummaryFieldExtension
 ---
 Name: goldfinch-nest-icon
 Only:

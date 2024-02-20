@@ -87,10 +87,6 @@ class NestedObject extends DataObject implements CMSPreviewable
         'MenuTitle' => 'Navigation title',
     ];
 
-    private static $summary_fields = [
-        'GridItemSummary' => 'Summary',
-    ];
-
     private static $runCMSFieldsExtensions = true;
 
     private static $required_title = true;
@@ -101,42 +97,9 @@ class NestedObject extends DataObject implements CMSPreviewable
         'Title',
     ];
 
-    public function GridItemSummary()
+    public function updateGridItemSummaryList(&$list)
     {
-        $html = DBHTMLText::create();
-
-        $str = '';
-
-        $str .= '<div>';
-        foreach ($this->GridItemSummaryList() as $label => $value) {
-            if ($label == 'Image') {
-                $str = '<div style="width: 100px; float: left; margin-right: 20px; border-radius: 10px; overflow: hidden">' . $value . '</div>' . $str;
-                continue;
-            }
-
-            if ($label[0] == '-') {
-                $label = '';
-            } else {
-                $label = '<span style="color: #666; font-weight: 600">'.$label.':</span> ';
-            }
-
-            $str .= '<div style="margin-bottom: 10px">'.$label.'<span>'.$value.'</span></div>';
-        }
-        $str .= '</div>';
-
-        return $html->setValue($str);
-    }
-
-    public function GridItemSummaryList()
-    {
-        $list = [
-            '-Title' => '<span style="display: block; font-size: 14px; font-weight: 600">' . $this->Title . '</span>',
-            '-HTMLLink' => $this->HTMLLink(),
-        ];
-
-        $this->extend('updateGridItemSummaryList', $list);
-
-        return $list;
+        $list['-HTMLLink'] = $this->HTMLLink();
     }
 
     public function validate()
