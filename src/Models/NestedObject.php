@@ -423,7 +423,8 @@ class NestedObject extends DataObject implements CMSPreviewable
     {
         $link = $this->AbsoluteLink($action);
         $this->extend('updatePreviewLink', $link, $action);
-        return $link;
+
+        return $link == '#broken-link' ? null : $link;
     }
 
     public function generateURLSegment($title)

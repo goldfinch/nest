@@ -91,6 +91,8 @@ class Nest extends SiteTree
                 ->end(),
         ]);
 
+        $this->extend('updateSettingsFields', $fields);
+
         return $fields;
     }
 
